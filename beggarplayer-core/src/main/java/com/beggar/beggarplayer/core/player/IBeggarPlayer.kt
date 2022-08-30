@@ -1,11 +1,16 @@
-package com.beggar.lanplayer.core.player
+package com.beggar.beggarplayer.core.player
 
 /**
  * author: BeggarLan
  * created on: 2022/8/30 10:33 上午
  * description: 播放器接口
  */
-interface IMediaPlayer {
+interface IBeggarPlayer {
+
+  /**
+   * 状态监听
+   */
+  fun setStateListener(stateListener: BeggarPlayerStateListener?)
 
   // ********************* 生命周期相关 *********************
   /**
