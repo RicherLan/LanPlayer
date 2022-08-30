@@ -1,4 +1,6 @@
-package com.beggar.beggarplayer.core.player
+package com.beggar.beggarplayer.core.player.listener
+
+import com.beggar.beggarplayer.core.player.BeggarPlayerState
 
 /**
  * author: BeggarLan

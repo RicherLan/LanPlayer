@@ -1,5 +1,7 @@
 package com.beggar.beggarplayer.core.player
 
+import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+
 /**
  * author: BeggarLan
  * created on: 2022/8/30 10:33 上午
@@ -8,9 +10,9 @@ package com.beggar.beggarplayer.core.player
 interface IBeggarPlayer {
 
   /**
-   * 状态监听
+   * 状态更改监听
    */
-  fun setStateListener(stateListener: IBeggarPlayerStateChangeListener?)
+  fun setStateListener(listener: IBeggarPlayerStateChangeListener?)
 
   // ********************* 生命周期相关 *********************
   /**

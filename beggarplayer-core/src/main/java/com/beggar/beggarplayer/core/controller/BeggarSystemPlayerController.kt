@@ -1,7 +1,7 @@
 package com.beggar.beggarplayer.core.controller
 
 import android.view.TextureView
-import com.beggar.beggarplayer.core.player.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 
 /**
  * author: BeggarLan

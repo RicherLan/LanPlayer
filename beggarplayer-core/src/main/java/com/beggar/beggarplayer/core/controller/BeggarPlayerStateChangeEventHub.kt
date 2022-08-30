@@ -2,7 +2,7 @@ package com.beggar.beggarplayer.core.controller
 
 import com.beggar.beggarplayer.core.base.EventHub
 import com.beggar.beggarplayer.core.player.BeggarPlayerState
-import com.beggar.beggarplayer.core.player.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 
 /**
  * author: BeggarLan
