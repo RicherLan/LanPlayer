@@ -1,11 +1,11 @@
 package com.beggar.beggarplayer.core.player
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/8/30 5:42 下午
- * description: 播放器状态监听
+ * description: 播放器状态更改监听
  */
-interface BeggarPlayerStateListener {
+interface IBeggarPlayerStateChangeListener {
 
   /**
    * 播放器状态更改

@@ -1,7 +1,7 @@
 package com.beggar.beggarplayer.core.player
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/8/30 10:20 上午
  * description: 播放器状态，值越大表示状态越往后
  * <a href="https://developer.android.google.cn/reference/android/media/MediaPlayer#state-diagram">android播放器状态流转图</a>

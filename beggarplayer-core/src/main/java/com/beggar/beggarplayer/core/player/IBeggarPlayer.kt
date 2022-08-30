@@ -10,7 +10,7 @@ interface IBeggarPlayer {
   /**
    * 状态监听
    */
-  fun setStateListener(stateListener: BeggarPlayerStateListener?)
+  fun setStateListener(stateListener: IBeggarPlayerStateChangeListener?)
 
   // ********************* 生命周期相关 *********************
   /**
