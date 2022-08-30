@@ -1,18 +1,23 @@
-package com.beggar.beggarplayer.core.player
+package com.beggar.beggarplayer.core.player.systemplayer
 
+import com.beggar.beggarplayer.core.base.BeggarPlayerLogger
+import com.beggar.beggarplayer.core.player.BeggarPlayerState
+import com.beggar.beggarplayer.core.player.IBeggarPlayer
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 
 /**
- * author: lanweihua
- * created on: 2022/8/30 8:51 下午
- * description: 播放器基类
- * 1. 状态流转封装
+ * author: BeggarLan
+ * created on: 2022/8/30 8:33 下午
+ * description: 采用系统播放器实现
  */
-class BeggarBasePlayer : IBeggarPlayer {
+class SystemMediaPlayer : IBeggarPlayer {
 
   companion object {
-    private const val TAG = "BeggarBasePlayer"
+    private const val TAG = "SystemMediaPlayer"
   }
+
+  // 播放器当前的状态，默认idle
+  private var mCurrentPlayerState: BeggarPlayerState = BeggarPlayerState.IDLE
 
   // 状态更改监听
   private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
@@ -59,6 +64,13 @@ class BeggarBasePlayer : IBeggarPlayer {
 
   override fun setLoop(loop: Boolean) {
     TODO("Not yet implemented")
+  }
+
+  private fun moveToState(newState: BeggarPlayerState) {
+    BeggarPlayerLogger.log(
+      TAG, "moveToState: ".plus(mCurrentPlayerState.name).plus(" -> ").plus(newState.name)
+    )
+    mCurrentPlayerState = newState
   }
 
 }
