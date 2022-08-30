@@ -1,4 +1,4 @@
-package com.beggar.lanplayer.core.player
+package com.beggar.beggarplayer.core.player
 
 /**
  * author: lanweihua
@@ -6,7 +6,7 @@ package com.beggar.lanplayer.core.player
  * description: 播放器状态，值越大表示状态越往后
  * <a href="https://developer.android.google.cn/reference/android/media/MediaPlayer#state-diagram">android播放器状态流转图</a>
  */
-enum class PlayerState(val value: Int) {
+enum class BeggarPlayerState(val value: Int) {
 
   IDLE(1 shl 1),
   INITIALIZED(1 shl 2), // 设置完数据源后
