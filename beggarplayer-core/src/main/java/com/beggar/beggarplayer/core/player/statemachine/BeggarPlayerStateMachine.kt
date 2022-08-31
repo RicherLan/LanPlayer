@@ -1,7 +1,11 @@
 package com.beggar.beggarplayer.core.player.statemachine
 
 import com.beggar.beggarplayer.core.base.StateMachine
+import com.beggar.beggarplayer.core.player.statemachine.BeggarPlayerState.IdleState
+import com.beggar.beggarplayer.core.player.statemachine.BeggarPlayerState.InitializedState
+import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableTable
+
 
 /**
  * author: BeggarLan
@@ -20,7 +24,10 @@ class BeggarPlayerStateMachine : StateMachine<PlayerState>() {
   }
 
   override fun getStateGraph(): ImmutableTable<PlayerState, PlayerState, List<PlayerState>> {
-    TODO("Not yet implemented")
+    // TODO: 补充完整
+    return ImmutableTable.builder<PlayerState, PlayerState, List<PlayerState>>()
+      .put(IdleState, InitializedState, ImmutableList.of(InitializedState))
+      .build()
   }
 
 }
