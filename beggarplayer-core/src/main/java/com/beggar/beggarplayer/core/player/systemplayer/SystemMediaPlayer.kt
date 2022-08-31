@@ -1,76 +1,66 @@
 package com.beggar.beggarplayer.core.player.systemplayer
 
-import com.beggar.beggarplayer.core.base.BeggarPlayerLogger
-import com.beggar.beggarplayer.core.player.BeggarPlayerState
-import com.beggar.beggarplayer.core.player.IBeggarPlayer
-import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.BeggarBasePlayer
+import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 
 /**
  * author: BeggarLan
  * created on: 2022/8/30 8:33 下午
  * description: 采用系统播放器实现
  */
-class SystemMediaPlayer : IBeggarPlayer {
+class SystemMediaPlayer : BeggarBasePlayer() {
 
   companion object {
     private const val TAG = "SystemMediaPlayer"
   }
 
-  // 播放器当前的状态，默认idle
-  private var mCurrentPlayerState: BeggarPlayerState = BeggarPlayerState.IDLE
+  // ********************* 驱动生命周期的方法 *********************
+  override fun setDataSourceInner(dataSource: BeggarPlayerDataSource) {
 
-  // 状态更改监听
-  private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
-
-  override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
-    stateChangeListener = listener
   }
 
-  override fun prepare() {
-    TODO("Not yet implemented")
+  override fun prepareInner() {
+
   }
 
-  override fun prepareAsync() {
-    TODO("Not yet implemented")
+  override fun prepareAsyncInner() {
+
   }
 
-  override fun start() {
-    TODO("Not yet implemented")
+  override fun startInner() {
+
   }
 
-  override fun pause() {
-    TODO("Not yet implemented")
+  override fun pauseInner() {
+
   }
 
-  override fun stop() {
-    TODO("Not yet implemented")
+  override fun stopInner() {
+
   }
 
-  override fun reset() {
-    TODO("Not yet implemented")
+  override fun resetInner() {
+
   }
 
-  override fun release() {
-    TODO("Not yet implemented")
-  }
+  override fun releaseInner() {
 
+  }
+  // ********************* 驱动生命周期的方法 *********************
+
+
+  // ********************* 其他方法 *********************
   override fun seekTo(timeMs: Long) {
-    TODO("Not yet implemented")
+
   }
 
   override fun setVolume(volume: Float) {
-    TODO("Not yet implemented")
+
   }
 
   override fun setLoop(loop: Boolean) {
-    TODO("Not yet implemented")
-  }
 
-  private fun moveToState(newState: BeggarPlayerState) {
-    BeggarPlayerLogger.log(
-      TAG, "moveToState: ".plus(mCurrentPlayerState.name).plus(" -> ").plus(newState.name)
-    )
-    mCurrentPlayerState = newState
   }
+  // ********************* 其他方法 *********************
 
 }

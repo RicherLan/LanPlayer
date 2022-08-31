@@ -1,8 +1,8 @@
 package com.beggar.beggarplayer.core.controller
 
 import com.beggar.beggarplayer.core.base.EventHub
-import com.beggar.beggarplayer.core.player.BeggarPlayerState
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.statemachine.PlayerState
 
 /**
  * author: BeggarLan
@@ -12,14 +12,9 @@ import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeList
 class BeggarPlayerStateChangeEventHub
   : EventHub<IBeggarPlayerStateChangeListener>(), IBeggarPlayerStateChangeListener {
 
-  override fun onChange(oldState: BeggarPlayerState, newState: BeggarPlayerState) {
+  override fun onChange(newState: PlayerState) {
     for (listener in listeners) {
-      listener.onChange(oldState, newState)
-    }
-    listeners.forEach { listener ->
-      run {
-        listener.onChange(oldState, newState)
-      }
+      listener.onChange(newState)
     }
   }
 

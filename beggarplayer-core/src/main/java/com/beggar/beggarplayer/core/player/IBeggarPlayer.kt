@@ -1,5 +1,6 @@
 package com.beggar.beggarplayer.core.player
 
+import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 
 /**
@@ -15,6 +16,11 @@ interface IBeggarPlayer {
   fun setStateListener(listener: IBeggarPlayerStateChangeListener?)
 
   // ********************* 生命周期相关 *********************
+  /**
+   * 设置数据源
+   */
+  fun setDataSource(dataSource: BeggarPlayerDataSource)
+
   /**
    * 准备
    */
