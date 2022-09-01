@@ -87,6 +87,16 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   override fun release() {
     stateMachine.transitionTo(BeggarPlayerState.EndState)
   }
+
+  // 子类在完成时调用
+  protected fun transitionToCompleted() {
+    stateMachine.transitionTo(BeggarPlayerState.CompletedState)
+  }
+
+  // 子类在出错时调用
+  protected fun transitionToError() {
+    stateMachine.transitionTo(BeggarPlayerState.ErrorState)
+  }
   // ********************* 生命周期相关 *********************
 
 

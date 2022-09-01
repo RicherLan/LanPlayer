@@ -74,12 +74,16 @@ class SystemMediaPlayer : BeggarBasePlayer() {
     mediaPlayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
       override fun onCompletion(mp: MediaPlayer?) {
         BeggarPlayerLogger.log(TAG, "onCompletion")
+        // 驱动状态
+        transitionToCompleted()
       }
     })
     // error时回调
     mediaPlayer.setOnErrorListener(object : MediaPlayer.OnErrorListener {
       override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         BeggarPlayerLogger.log(TAG, "[onError][what=".plus(what).plus("]"))
+        // 驱动状态
+        transitionToError()
         return false
       }
     })
