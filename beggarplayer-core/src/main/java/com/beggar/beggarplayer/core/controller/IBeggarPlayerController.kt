@@ -22,16 +22,16 @@ interface IBeggarPlayerController {
   fun unregisterStateChangeListener(listener: IBeggarPlayerStateChangeListener)
 
   /**
-   * 设置数据源
-   */
-  fun setDataSource()
-
-  /**
    * 给播放器设置TextureView，由该TextureView产生的surface进行播放
    */
   fun setTextureView(view: TextureView)
 
   // ********************* 生命周期相关 *********************
+  /**
+   * 设置数据源
+   */
+  fun setDataSource()
+
   /**
    * 开始播放
    */
