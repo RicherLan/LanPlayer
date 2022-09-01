@@ -1,7 +1,7 @@
 package com.beggar.beggarplayer.core.controller
 
-import android.view.TextureView
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**
  * author: BeggarLan
@@ -24,7 +24,7 @@ interface IBeggarPlayerController {
   /**
    * 给播放器设置TextureView，由该TextureView产生的surface进行播放
    */
-  fun setTextureView(view: TextureView)
+  fun setTextureView(view: BeggarPlayerTextureView)
 
   // ********************* 生命周期相关 *********************
   /**

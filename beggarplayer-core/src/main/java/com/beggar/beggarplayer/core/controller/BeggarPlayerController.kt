@@ -1,10 +1,10 @@
 package com.beggar.beggarplayer.core.controller
 
-import android.view.TextureView
 import com.beggar.beggarplayer.core.controller.config.BeggarPlayerControllerConfig
 import com.beggar.beggarplayer.core.player.IBeggarPlayer
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayer
+import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**
  * author: BeggarLan
@@ -16,11 +16,13 @@ import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayer
  * 4. 提供监听播放器状态的能力
  * @param config 配置
  */
-class BeggarPlayerController(private val config: BeggarPlayerControllerConfig) :
-  IBeggarPlayerController {
+class BeggarPlayerController(
+  private val config: BeggarPlayerControllerConfig
+) : IBeggarPlayerController {
 
   // 播放器实例
   private var player: IBeggarPlayer
+  private lateinit var textureView: BeggarPlayerTextureView
 
   // 用于分发播放器状态更改事件的
   private val playerStateChangeEventHub = BeggarPlayerStateChangeEventHub()
@@ -43,8 +45,12 @@ class BeggarPlayerController(private val config: BeggarPlayerControllerConfig) :
     playerStateChangeEventHub.unregisterListener(listener)
   }
 
-  override fun setTextureView(view: TextureView) {
-    TODO("Not yet implemented")
+  override fun setTextureView(view: BeggarPlayerTextureView) {
+    if (textureView == view) {
+      return
+    }
+    textureView = view
+    // TODO: view更换时其他逻辑处理
   }
 
 
