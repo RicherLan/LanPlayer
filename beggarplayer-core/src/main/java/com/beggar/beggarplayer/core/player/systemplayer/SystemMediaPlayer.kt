@@ -41,6 +41,7 @@ class SystemMediaPlayer : BeggarBasePlayer() {
     // 数据源准备好时回调
     mediaPlayer.setOnPreparedListener {
       BeggarPlayerLogger.log(TAG, "onPrepared")
+      onPreparedByAsync()
     }
     // 在网络流缓冲区的状态发生变化时回调
     mediaPlayer.setOnBufferingUpdateListener(object : MediaPlayer.OnBufferingUpdateListener {
@@ -75,7 +76,7 @@ class SystemMediaPlayer : BeggarBasePlayer() {
       override fun onCompletion(mp: MediaPlayer?) {
         BeggarPlayerLogger.log(TAG, "onCompletion")
         // 驱动状态
-        transitionToCompleted()
+        ooCompleted()
       }
     })
     // error时回调
@@ -83,7 +84,7 @@ class SystemMediaPlayer : BeggarBasePlayer() {
       override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         BeggarPlayerLogger.log(TAG, "[onError][what=".plus(what).plus("]"))
         // 驱动状态
-        transitionToError()
+        ooError()
         return false
       }
     })
@@ -124,7 +125,7 @@ class SystemMediaPlayer : BeggarBasePlayer() {
   // ********************* 驱动生命周期的方法 *********************
 
 
-  // ********************* 其他方法 *********************
+  // ********************* 其他操作方法 *********************
   override fun seekTo(timeMs: Long) {
 
   }
@@ -136,6 +137,17 @@ class SystemMediaPlayer : BeggarBasePlayer() {
   override fun setLoop(loop: Boolean) {
 
   }
-  // ********************* 其他方法 *********************
+  // ********************* 其他操作方法 *********************
+
+
+  // ********************* 获得一些信息 *********************
+  override fun getVideoWidth(): Int {
+    return mediaPlayer.videoWidth
+  }
+
+  override fun getVideoHeight(): Int {
+    return mediaPlayer.videoHeight
+  }
+  // ********************* 获得一些信息 *********************
 
 }

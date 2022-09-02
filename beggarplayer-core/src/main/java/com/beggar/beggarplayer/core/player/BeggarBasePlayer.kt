@@ -1,6 +1,7 @@
 package com.beggar.beggarplayer.core.player
 
 import android.os.Message
+import androidx.annotation.IntDef
 import com.beggar.beggarplayer.core.base.StateMachine
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
@@ -18,6 +19,21 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
 
   companion object {
     private const val TAG = "BeggarBasePlayer"
+
+
+  }
+
+  // 进入Prepared状态的方式
+  @IntDef(
+    PreparedStateWay.preparedStateWaySync,
+    PreparedStateWay.preparedStateWayAsync
+  )
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class PreparedStateWay {
+    companion object {
+      const val preparedStateWaySync = 1 // 同步
+      const val preparedStateWayAsync = 2 // 异步
+    }
   }
 
   // 状态机
@@ -35,7 +51,14 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
             setDataSourceInner(msg!!.obj as BeggarPlayerDataSource)
           }
           BeggarPlayerState.PreparingState -> prepareAsyncInner()
-          BeggarPlayerState.PreparedState -> prepareInner()
+          BeggarPlayerState.PreparedState -> {
+            when (msg!!.what) {
+              // 同步的方式
+              PreparedStateWay.preparedStateWaySync -> prepareInner()
+              // 异步的方式去prepare，触发prepared是回调的形式，此时已经完成了逻辑，所以不需要额外处理
+              PreparedStateWay.preparedStateWayAsync -> {}
+            }
+          }
           BeggarPlayerState.StartedState -> startInner()
           BeggarPlayerState.PausedState -> pauseInner()
           BeggarPlayerState.StoppedState -> stopInner()
@@ -61,7 +84,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   override fun prepare() {
-    stateMachine.transitionTo(BeggarPlayerState.PreparedState)
+    val message = Message.obtain()
+    message.what = PreparedStateWay.preparedStateWaySync
+    stateMachine.transitionTo(BeggarPlayerState.PreparedState, message)
   }
 
   override fun prepareAsync() {
@@ -88,13 +113,20 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
     stateMachine.transitionTo(BeggarPlayerState.EndState)
   }
 
+  // 子类在异步prepare完成时调用
+  protected fun onPreparedByAsync() {
+    val message = Message.obtain()
+    message.what = PreparedStateWay.preparedStateWayAsync
+    stateMachine.transitionTo(BeggarPlayerState.PreparedState)
+  }
+
   // 子类在完成时调用
-  protected fun transitionToCompleted() {
+  protected fun ooCompleted() {
     stateMachine.transitionTo(BeggarPlayerState.CompletedState)
   }
 
   // 子类在出错时调用
-  protected fun transitionToError() {
+  protected fun ooError() {
     stateMachine.transitionTo(BeggarPlayerState.ErrorState)
   }
   // ********************* 生命周期相关 *********************
