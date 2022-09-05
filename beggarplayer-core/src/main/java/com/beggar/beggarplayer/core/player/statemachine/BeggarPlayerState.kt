@@ -1,5 +1,6 @@
 package com.beggar.beggarplayer.core.player.statemachine
 
+import android.os.Message
 import androidx.annotation.CallSuper
 import com.beggar.beggarplayer.core.base.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.base.StateMachine
@@ -36,5 +37,9 @@ open class PlayerState : StateMachine.State {
   @CallSuper
   override fun entered() {
     BeggarPlayerLogger.log(TAG, this.javaClass.simpleName.plus(" entered"))
+  }
+
+  override fun processMsg(msg: Message) {
+    trans
   }
 }

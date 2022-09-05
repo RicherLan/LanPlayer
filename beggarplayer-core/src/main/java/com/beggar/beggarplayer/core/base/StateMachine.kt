@@ -1,7 +1,6 @@
 package com.beggar.beggarplayer.core.base
 
 import android.os.Message
-import com.google.common.collect.ImmutableTable
 
 
 /**
@@ -11,16 +10,16 @@ import com.google.common.collect.ImmutableTable
  */
 abstract class StateMachine<S : StateMachine.State> {
 
-  // 状态图: A状态-->B状态 : 经过一系列中间状态节点
-  private val stateGraph: ImmutableTable<S, S, List<S>>
+  // 所有的状态
+  private val states = HashSet<S>()
 
   // 当前状态，构造函数传入是指定初始状态
   lateinit var currentState: S
 
   private var stateCallback: StateCallback<S>? = null
 
-  init {
-    stateGraph = getStateGraph()
+  protected fun addState(state: S) {
+    states.add(state)
   }
 
   /**
@@ -30,13 +29,17 @@ abstract class StateMachine<S : StateMachine.State> {
     currentState = state
   }
 
-  /**
-   * 状态图
-   */
-  protected abstract fun getStateGraph(): ImmutableTable<S, S, List<S>>
+  fun sendMsg(what: Int) {
+    val message = Message.obtain()
+    message.what = what
+    sendMsg(message)
+  }
 
-  fun transitionTo(targetState: S): Boolean {
-    return transitionTo(targetState, null)
+  /**
+   * 向状态机发消息
+   */
+  fun sendMsg(msg: Message) {
+    currentState.processMsg(msg)
   }
 
   /**
@@ -45,7 +48,7 @@ abstract class StateMachine<S : StateMachine.State> {
    * @param targetState 目标状态
    * @return {@code true} 到达目标状态成功
    */
-  fun transitionTo(targetState: S, msg: Message?): Boolean {
+  fun transitionTo(targetState: S): Boolean {
     val states: List<S>? = stateGraph.get(currentState, targetState)
     // 无法到达
     if (states == null || states.isEmpty()) {
@@ -67,11 +70,13 @@ abstract class StateMachine<S : StateMachine.State> {
 
   // 状态
   interface State {
-    // 即将进入状态
-    fun preEnter()
-
     // 进入状态
-    fun entered()
+    fun enter()
+
+    // 退出状态
+    fun exist()
+
+    fun processMsg(msg: Message)
   }
 
   // 状态监听
