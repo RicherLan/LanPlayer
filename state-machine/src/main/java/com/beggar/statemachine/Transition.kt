@@ -6,5 +6,10 @@ package com.beggar.statemachine
  * description: 描述状态之间的转换
  * fromState -> toState : Event
  */
-interface Transition {
+class Transition(
+  val name: String,
+  val from: State,
+  val to: State
+) {
+
 }
