@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.TextureView
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/9/1 6:16 下午
  * description: 播放器TextureView
  */
