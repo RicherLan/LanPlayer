@@ -15,12 +15,12 @@ open class State(
   /**
    * 状态进入时调用
    */
-  open fun onEnter(event: Event) {}
+  open fun onEnter() {}
 
   /**
    * 状态退出时调用
    */
-  open fun onExit(event: Event) {}
+  open fun onExit() {}
 
   /**
    * 向状态机发送事件
