@@ -14,7 +14,9 @@ import com.beggar.statemachine.SyncStateMachine
 class ChildStateMachineState(
   name: String,
   private val stateMachine: SyncStateMachine,
-  val childStateMachine: ChildSyncStateMachine
+  val childStateMachine: SyncStateMachine
 ) : State(name, stateMachine) {
+
+  private val childMachine = childStateMachine as ChildSyncStateMachine
 
 }

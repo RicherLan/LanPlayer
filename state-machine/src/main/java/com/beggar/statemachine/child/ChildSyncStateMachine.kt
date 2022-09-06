@@ -12,12 +12,11 @@ import com.beggar.statemachine.error.StateMachineException
  * description: 子状态机(非第一层)
  */
 class ChildSyncStateMachine(
-  name: String,
   private val parent: SyncStateMachine,
   states: List<State>,
   transitions: Map<State, List<Transition>>,
   initialState: State
-) : SyncStateMachine(name, states, transitions, initialState) {
+) : SyncStateMachine(states, transitions, initialState) {
 
   override fun start() {
     throw StateMachineException("ChildStateMachine can't call start()!")

@@ -1,6 +1,9 @@
 package com.beggar.statemachine
 
 import com.beggar.statemachine.child.ChildStateMachineState
+import com.beggar.statemachine.child.ChildSyncStateMachine
+import com.beggar.statemachine.error.StateMachineException
+import com.beggar.statemachine.root.RootSyncStateMachine
 
 /**
  * author: BeggarLan
@@ -14,7 +17,6 @@ import com.beggar.statemachine.child.ChildStateMachineState
  * @param initialState  初始状态
  */
 abstract class SyncStateMachine(
-  val name: String,
   private val states: List<State>,
   private val transitions: Map<State, List<Transition>>,
   protected val initialState: State
@@ -162,10 +164,12 @@ abstract class SyncStateMachine(
     }
   }
 
+
+  // *******************************************************************
   /**
    * 构造器
    */
-  private class BasicBuilder {
+  open class Builder {
 
     var initialState: State? = null
     val states = mutableListOf<State>()
@@ -195,11 +199,40 @@ abstract class SyncStateMachine(
 
     /**
      * 添加子状态机
+     * @param state                     该节点内部有子状态机
+     * @param childStateMachineBuilder  子状态机构造器
      */
-    fun childStateMachine() {
-
+    fun childStateMachine(
+      state: ChildStateMachineState,
+      childStateMachineBuilder: ChildStateMachineBuilder
+    ) {
+      val stateMachine = childStateMachineBuilder.build()
+      state.childStateMachine = stateMachine
+      addState(state)
     }
 
+    protected fun checkInitialState(): State {
+      check(states.contains(initialState)) {
+        "initialState $initialState not added!"
+      }
+      return initialState ?: throw StateMachineException("initialState is null!")
+    }
+
+    open fun build(): SyncStateMachine {
+      val initialState = checkInitialState()
+      return RootSyncStateMachine(states, transitions, initialState)
+    }
+  }
+
+  /**
+   * 子状态机builder
+   */
+  class ChildStateMachineBuilder : Builder() {
+
+    override fun build(): SyncStateMachine {
+      val initialState = checkInitialState()
+      return ChildSyncStateMachine(null, states, transitions, initialState)
+    }
   }
 
 }
