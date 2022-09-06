@@ -62,7 +62,40 @@ abstract class SyncStateMachine(
   }
 
   /**
-   * @return null表示事件入队列排队了(现在正在执行其他事件的逻辑)
+   * 当前有事件正在处理的话，那么新事件会加入到队列尾部
+   * @return null表示事件入队列排队了(现在正在执行其他事件的逻辑: 如某执行体中又addAction这种递归)
+   * 通常发生在，在状态的onEnter或者onExit中调用了sendEvent()
+   *
+   * state structure:
+   * A -> (sub state) B -> (sub state) C
+   * B是A的子状态，C是B的子状态。这样当进入A的时候会进入子状态的初始状态，
+   * 因此会有这样的调用顺序 A::onEnter -> B::onEnter -> C::onEnter。
+   * 假设他们在onEnter的时候又发送了事件，如下：
+   * A {
+   *   A::onEnter {
+   *     post event-1
+   *
+   *     B {
+   *       B::onEnter {
+   *         post event-2
+   *
+   *         C {
+   *           C::onEnter {
+   *            post event-3
+   *           }
+   *         }
+   *
+   *       }
+   *     }
+   *
+   *    }
+   *
+   *   上述的post-event会被队列起来，当上一个状态迁移完成之后才会执行。而每一层状态机都有自己的队列。
+   *   执行结果：
+   *   execute event-1
+   *   execute event-2
+   *   execute event-3
+   * }
    */
   fun sendEvent(event: Event): Boolean? {
     checkThread()
@@ -98,6 +131,7 @@ abstract class SyncStateMachine(
       return true
     }
 
+    // 处理事件
     return currentState.handleEvent(event)
   }
 
