@@ -60,6 +60,13 @@ abstract class SyncStateMachine(
   }
 
   /**
+   * 从根状态机发送事件
+   * 1. 当前状态机是根状态机：那么直接处理事件
+   * 2. 当前状态机是子状态机：那么parent.sendEventFromRoot，这样最终交给根状态机处理
+   */
+  internal abstract fun sendEventFromRoot(event: Event)
+
+  /**
    * 当前有事件正在处理的话，那么新事件会加入到队列尾部
    * @return null表示事件入队列排队了(现在正在执行其他事件的逻辑: 如某执行体中又addAction这种递归)
    * 通常发生在，在状态的onEnter或者onExit中调用了sendEvent()
@@ -108,6 +115,7 @@ abstract class SyncStateMachine(
    * 直接执行事件(不排队)
    * 事件会先向子状态机分发(因为"当前"状态肯定是最低层的叶子节点)，如果子状态机无法处理，那么调用自己的currentState.handleEvent
    */
+  // TODO: 因为当前状态已经确定了，所以这里最完美的应该是直接操作最底层的状态去处理事件，无法处理的话在往上抛
   protected fun sendEventDirect(event: Event): Boolean {
     var currentState = currentState ?: throw IllegalStateException(
       TAG.plus("[stateMachine has already stopped")

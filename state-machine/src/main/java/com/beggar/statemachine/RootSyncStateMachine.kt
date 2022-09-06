@@ -28,4 +28,8 @@ class RootSyncStateMachine(
     }
   }
 
+  override fun sendEventFromRoot(event: Event) {
+    sendEvent(event)
+  }
+
 }

@@ -24,9 +24,10 @@ open class State(
 
   /**
    * 向状态机发送事件
+   * 事件交给根层状态机分发
    */
   open fun sendEvent(event: Event) {
-
+    stateMachine.sendEventFromRoot(event)
   }
 
   /**

@@ -19,4 +19,8 @@ class ChildSyncStateMachine(
     throw StateMachineException("ChildStateMachine can't call start()!")
   }
 
+  override fun sendEventFromRoot(event: Event) {
+    parent.sendEventFromRoot(event)
+  }
+
 }
