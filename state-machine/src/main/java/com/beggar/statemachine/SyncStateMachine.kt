@@ -4,7 +4,9 @@ package com.beggar.statemachine
  * author: BeggarLan
  * created on: 2022/9/5 12:49 下午
  * description: 同步状态机
- * 这里的同步: 操作状态机时检查当前线程 是否是 创建状态机所在的线程，并不是通过postMsg的方式去放在同一线程
+ * 1. 这里的同步: 操作状态机时检查当前线程 是否是 创建状态机所在的线程，并不是通过postMsg的方式去放在同一线程
+ * 2. 调用方发送事件的时候，事件会先向子状态机分发，如果子状态机无法处理，那么调用自己的currentState.handleEvent
+ *
  * @param states        所有的状态
  * @param transitions   描述状态图。key: 当前节点, value: 从当前节点出发的所有路径
  * @param initialState  初始状态
@@ -71,11 +73,32 @@ abstract class SyncStateMachine(
     return handled
   }
 
-  /**
+  /*
    * 直接执行事件(不排队)
+   * 事件会先向子状态机分发(因为"当前"状态肯定是最低层的叶子节点)，如果子状态机无法处理，那么调用自己的currentState.handleEvent
    */
-  private fun sendEventDirect(event: Event): Boolean {
+  protected fun sendEventDirect(event: Event): Boolean {
+    var currentState = currentState ?: throw IllegalStateException(
+      TAG.plus("[stateMachine has already stopped")
+    )
+    // 如果当前状态含有子状态机，那么把事件向内部传递
+    if (currentState is ChildStateMachineState) {
+      var childHandled = currentState.childStateMachine.sendEventDirect(event)
+      if (childHandled) {
+        return true
+      }
+    }
 
+    // 状态转换
+    transitions[currentState]?.forEach { transition ->
+      currentState.onExit()
+      val toState = transition.to
+      toState.onEnter()
+      currentState = toState
+      return true
+    }
+
+    return currentState.handleEvent(event)
   }
 
   /**

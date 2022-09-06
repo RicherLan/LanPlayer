@@ -5,7 +5,7 @@ package com.beggar.statemachine
  * created on: 2022/9/5 12:48 下午
  * description: 描述状态
  *
- * @param stateMachine 状态机
+ * @param stateMachine 当前节点所在的状态机(当前层的状态机)
  */
 open class State(
   val name: String,
@@ -31,9 +31,8 @@ open class State(
 
   /**
    * 处理事件
+   * @return 表示是否处理了事件
    */
-  open fun handleEvent(event: Event) {
-
-  }
+  open fun handleEvent(event: Event): Boolean = false
 
 }

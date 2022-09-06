@@ -7,6 +7,7 @@ package com.beggar.statemachine
  */
 class ChildSyncStateMachine(
   name: String,
+  private val parent: SyncStateMachine,
   states: List<State>,
   transitions: Map<State, List<Transition>>,
   initialState: State
