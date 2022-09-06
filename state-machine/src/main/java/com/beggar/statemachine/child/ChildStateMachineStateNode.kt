@@ -14,14 +14,14 @@ import com.beggar.statemachine.SyncStateMachine
  */
 class ChildStateMachineStateNode(
   state: State,
-  stateMachine: SyncStateMachine,
   val childStateMachine: SyncStateMachine
-) : StateNode(state, stateMachine) {
+) : StateNode(state) {
 
   private val childMachine = childStateMachine as ChildSyncStateMachine
 
-  init {
-    childMachine.parent = stateMachine
+  override fun init(machine: SyncStateMachine) {
+    super.init(machine)
+    childMachine.parent = machine
   }
 
   // 自己先enter，然后子状态机enter

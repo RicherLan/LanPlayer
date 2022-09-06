@@ -7,12 +7,18 @@ package com.beggar.statemachine
  * 把一些操作(比如和状态机对接)从State中拿出来，让state只关注状态本身
  *
  * @param state        关联的状态
- * @param stateMachine 当前节点所在的状态机(当前层的状态机)
  */
 open class StateNode(
   val state: State,
-  private val stateMachine: SyncStateMachine
 ) {
+
+  // 当前节点所在的状态机(当前层的状态机)
+  private lateinit var stateMachine: SyncStateMachine
+
+  // 初始化，必须调用
+  open fun init(machine: SyncStateMachine) {
+    stateMachine = machine
+  }
 
   // 进入状态
   open fun enter() {

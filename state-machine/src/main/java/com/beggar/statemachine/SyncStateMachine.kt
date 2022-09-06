@@ -197,10 +197,10 @@ abstract class SyncStateMachine(
     }
 
     // 添加状态
-    fun addState(state: State) {
+    fun addState(stateNode: StateNode) {
       // 检查state是否已经添加过
-      check(!states.contains(state)) {
-        "state:" + state.name + " has already added"
+      check(!states.contains(stateNode.state)) {
+        "state:" + stateNode.state.name + " has already added"
       }
     }
 
@@ -219,9 +219,7 @@ abstract class SyncStateMachine(
       state: ChildStateMachineState,
       childStateMachineBuilder: ChildStateMachineBuilder
     ) {
-      val stateMachine = childStateMachineBuilder.build()
-      state.childStateMachine = stateMachine
-      addState(state)
+      addState(ChildStateMachineStateNode(state, childStateMachineBuilder.build()))
     }
 
     protected fun checkInitialState(): State {
@@ -233,7 +231,11 @@ abstract class SyncStateMachine(
 
     open fun build(): SyncStateMachine {
       val initialState = checkInitialState()
-      return RootSyncStateMachine(states, transitions, initialState)
+      return RootSyncStateMachine(
+        states.map { it.stateNode },
+        transitions,
+        initialState.stateNode
+      )
     }
   }
 
@@ -244,7 +246,11 @@ abstract class SyncStateMachine(
 
     override fun build(): SyncStateMachine {
       val initialState = checkInitialState()
-      return ChildSyncStateMachine(null, states, transitions, initialState)
+      return ChildSyncStateMachine(
+        states.map { it.stateNode },
+        transitions,
+        initialState.stateNode
+      )
     }
   }
 
