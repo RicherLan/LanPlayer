@@ -1,6 +1,7 @@
 package com.beggar.statemachine
 
 import com.beggar.statemachine.child.ChildStateMachineState
+import com.beggar.statemachine.child.ChildStateMachineStateNode
 import com.beggar.statemachine.child.ChildSyncStateMachine
 import com.beggar.statemachine.error.StateMachineException
 import com.beggar.statemachine.root.RootSyncStateMachine
@@ -17,9 +18,9 @@ import com.beggar.statemachine.root.RootSyncStateMachine
  * @param initialState  初始状态
  */
 abstract class SyncStateMachine(
-  private val states: List<State>,
+  private val states: List<StateNode>,
   private val transitions: Map<State, List<Transition>>,
-  protected val initialState: State
+  protected val initialState: StateNode
 ) {
 
   companion object {
@@ -27,7 +28,7 @@ abstract class SyncStateMachine(
   }
 
   // 当前状态
-  var currentState: State? = null
+  var currentState: StateNode? = null
 
   // 状态机是否已经stop
   var isStopped = false
@@ -57,10 +58,22 @@ abstract class SyncStateMachine(
      * 2. 保证在onExit中postEvent(event会被加入到队列)，event可以在状态迁移完成后执行
      */
     addAction {
-      isStopped = true
-      currentState?.onExit()
-      currentState = null
+      exit()
     }
+  }
+
+  // 状态机进入
+  internal fun enter() {
+    val state = initialState
+    // 先Enter，在更新当前状态
+    state.enter()
+    currentState = state
+  }
+
+  internal fun exit() {
+    isStopped = true
+    currentState?.exit()
+    currentState = null
   }
 
   /**
@@ -125,7 +138,7 @@ abstract class SyncStateMachine(
       TAG.plus("[stateMachine has already stopped")
     )
     // 如果当前状态含有子状态机，那么把事件向内部传递
-    if (currentState is ChildStateMachineState) {
+    if (currentState is ChildStateMachineStateNode) {
       var childHandled = currentState.childStateMachine.sendEventDirect(event)
       if (childHandled) {
         return true
@@ -133,11 +146,11 @@ abstract class SyncStateMachine(
     }
 
     // 状态转换
-    transitions[currentState]?.forEach { transition ->
-      currentState.onExit()
+    transitions[currentState.state]?.forEach { transition ->
+      currentState.exit()
       val toState = transition.to
-      toState.onEnter()
-      currentState = toState
+      toState.stateNode.enter()
+      currentState = toState.stateNode
       return true
     }
 

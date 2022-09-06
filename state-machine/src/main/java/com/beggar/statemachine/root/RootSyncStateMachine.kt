@@ -2,6 +2,7 @@ package com.beggar.statemachine.root
 
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
+import com.beggar.statemachine.StateNode
 import com.beggar.statemachine.SyncStateMachine
 import com.beggar.statemachine.Transition
 
@@ -11,9 +12,9 @@ import com.beggar.statemachine.Transition
  * description: 第一层的状态机
  */
 class RootSyncStateMachine(
-  states: List<State>,
+  states: List<StateNode>,
   transitions: Map<State, List<Transition>>,
-  initialState: State
+  initialState: StateNode
 ) : SyncStateMachine(states, transitions, initialState) {
 
   override fun start() {
@@ -25,10 +26,7 @@ class RootSyncStateMachine(
 
     // 加入到队列中: 保证在onEnter中postEvent(event会被加入到队列)，event可以在状态迁移完成后执行
     addAction {
-      val state = initialState
-      // 先回调onEnter，在更新当前状态
-      state.onEnter()
-      currentState = state
+      enter()
     }
   }
 

@@ -4,13 +4,13 @@ package com.beggar.statemachine
  * author: BeggarLan
  * created on: 2022/9/5 12:48 下午
  * description: 描述状态
- *
- * @param stateMachine 当前节点所在的状态机(当前层的状态机)
  */
 open class State(
   val name: String,
-  private val stateMachine: SyncStateMachine
 ) {
+
+  // 关联的状态节点，内部封装了一些操作(主要是和状态机对接)
+  internal lateinit var stateNode: StateNode
 
   /**
    * 状态进入时调用
@@ -27,7 +27,7 @@ open class State(
    * 事件交给根层状态机分发
    */
   open fun sendEvent(event: Event) {
-    stateMachine.sendEventFromRoot(event)
+    stateNode.sendEventFromRoot(event)
   }
 
   /**
