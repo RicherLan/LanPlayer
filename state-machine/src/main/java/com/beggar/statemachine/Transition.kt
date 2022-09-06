@@ -9,7 +9,8 @@ package com.beggar.statemachine
 class Transition(
   val name: String,
   val from: State,
-  val to: State
+  val to: State,
+  val eventType: Class<*>,
 ) {
 
 }

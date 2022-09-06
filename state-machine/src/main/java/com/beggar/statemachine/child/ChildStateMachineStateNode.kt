@@ -1,5 +1,6 @@
 package com.beggar.statemachine.child
 
+import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.StateNode
 import com.beggar.statemachine.SyncStateMachine
@@ -25,15 +26,15 @@ class ChildStateMachineStateNode(
   }
 
   // 自己先enter，然后子状态机enter
-  override fun enter() {
-    super.enter()
-    childMachine.enter()
+  override fun enter(event: Event) {
+    super.enter(event)
+    childMachine.enter(event)
   }
 
   // 子状态机先exit，然后自己在exit
-  override fun exit() {
-    childMachine.exit()
-    super.exit()
+  override fun exit(event: Event) {
+    childMachine.exit(event)
+    super.exit(event)
   }
 
 }

@@ -21,12 +21,12 @@ open class StateNode(
   }
 
   // 进入状态
-  open fun enter() {
+  open fun enter(event: Event) {
     state.onEnter()
   }
 
   // 退出状态
-  open fun exit() {
+  open fun exit(event: Event) {
     state.onExit()
   }
 

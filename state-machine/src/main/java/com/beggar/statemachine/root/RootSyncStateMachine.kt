@@ -1,6 +1,7 @@
 package com.beggar.statemachine.root
 
 import com.beggar.statemachine.Event
+import com.beggar.statemachine.InitialEvent
 import com.beggar.statemachine.State
 import com.beggar.statemachine.StateNode
 import com.beggar.statemachine.SyncStateMachine
@@ -26,7 +27,7 @@ class RootSyncStateMachine(
 
     // 加入到队列中: 保证在onEnter中postEvent(event会被加入到队列)，event可以在状态迁移完成后执行
     addAction {
-      enter()
+      enter(InitialEvent())
     }
   }
 

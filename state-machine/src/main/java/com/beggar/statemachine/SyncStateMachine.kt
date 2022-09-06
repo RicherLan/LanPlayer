@@ -58,21 +58,21 @@ abstract class SyncStateMachine(
      * 2. 保证在onExit中postEvent(event会被加入到队列)，event可以在状态迁移完成后执行
      */
     addAction {
-      exit()
+      exit(StopEvent())
     }
   }
 
   // 状态机进入
-  internal fun enter() {
+  internal fun enter(event: Event) {
     val state = initialState
     // 先Enter，在更新当前状态
-    state.enter()
+    state.enter(event)
     currentState = state
   }
 
-  internal fun exit() {
+  internal fun exit(event: Event) {
     isStopped = true
-    currentState?.exit()
+    currentState?.exit(event)
     currentState = null
   }
 
@@ -147,11 +147,13 @@ abstract class SyncStateMachine(
 
     // 状态转换
     transitions[currentState.state]?.forEach { transition ->
-      currentState.exit()
-      val toState = transition.to
-      toState.stateNode.enter()
-      currentState = toState.stateNode
-      return true
+      if (event.javaClass == transition.eventType) {
+        currentState.exit(event)
+        val toState = transition.to
+        toState.stateNode.enter(event)
+        currentState = toState.stateNode
+        return true
+      }
     }
 
     // 处理事件
@@ -205,16 +207,16 @@ abstract class SyncStateMachine(
     }
 
     // 添加一组转换
-    fun transition(name: String, from: Set<State>, to: State) {
+    fun transition(name: String, from: Set<State>, to: State, eventType: Class<*>) {
       from.forEach {
-        transition(name, it, to)
+        transition(name, it, to, eventType)
       }
     }
 
     // 添加转换
-    fun transition(name: String, from: State, to: State) {
+    fun transition(name: String, from: State, to: State, eventType: Class<*>) {
       transitions.getOrPut(from) { mutableListOf() }
-        .add(Transition(name, from, to))
+        .add(Transition(name, from, to, eventType))
     }
 
     /**

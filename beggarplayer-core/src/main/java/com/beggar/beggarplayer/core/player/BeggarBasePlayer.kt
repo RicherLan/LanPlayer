@@ -19,8 +19,6 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
 
   companion object {
     private const val TAG = "BeggarBasePlayer"
-
-
   }
 
   // 进入Prepared状态的方式

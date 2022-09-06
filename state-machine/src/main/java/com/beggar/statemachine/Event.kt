@@ -6,3 +6,9 @@ package com.beggar.statemachine
  * description: 状态机事件
  */
 interface Event
+
+// 状态机启动的事件
+class InitialEvent : Event
+
+// 状态机stop的事件
+class StopEvent : Event
