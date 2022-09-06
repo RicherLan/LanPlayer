@@ -12,5 +12,20 @@ class RootSyncStateMachine(
   initialState: State
 ) : SyncStateMachine(name, states, transitions, initialState) {
 
+  override fun start() {
+    checkThread()
+    // 已经stop了
+    check(isStopped) {
+      "stateMachine has stopped!"
+    }
+
+    // 加入到队列中: 保证在onEnter中postEvent(event会被加入到队列)，event可以在状态迁移完成后执行
+    addAction {
+      val state = initialState
+      // 先回调onEnter，在更新当前状态
+      state.onEnter()
+      currentState = state
+    }
+  }
 
 }

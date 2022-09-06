@@ -15,7 +15,7 @@ abstract class SyncStateMachine(
   val name: String,
   private val states: List<State>,
   private val transitions: Map<State, List<Transition>>,
-  private val initialState: State
+  protected val initialState: State
 ) {
 
   companion object {
@@ -26,7 +26,7 @@ abstract class SyncStateMachine(
   var currentState: State? = null
 
   // 状态机是否已经stop
-  private var isStopped = false
+  var isStopped = false
 
   // 创建时所在的线程
   private val thread: Thread = Thread.currentThread()
@@ -37,16 +37,7 @@ abstract class SyncStateMachine(
   /**
    * 启动状态机
    */
-  fun start() {
-    checkThread()
-    if (isStopped) {
-      throw IllegalStateException(TAG.plus("[stateMachine has stopped!]"))
-    }
-    val state = initialState
-    // 先回调onEnter，在更新当前状态
-    state.onEnter()
-    currentState = state
-  }
+  abstract fun start()
 
   /**
    * 停止状态机
@@ -56,9 +47,16 @@ abstract class SyncStateMachine(
     if (isStopped) {
       return
     }
-    isStopped = true
-    currentState?.onExit()
-    currentState = null
+    /**
+     * 加入到队列中
+     * 1. 保证在状态退出之前，把队列前面的内容先执行掉
+     * 2. 保证在onExit中postEvent(event会被加入到队列)，event可以在状态迁移完成后执行
+     */
+    addAction {
+      isStopped = true
+      currentState?.onExit()
+      currentState = null
+    }
   }
 
   /**
@@ -138,7 +136,7 @@ abstract class SyncStateMachine(
   /**
    *  添加操作
    */
-  private fun addAction(action: () -> Unit) {
+  protected fun addAction(action: () -> Unit) {
     actionQueue.addAction(action)
   }
 
@@ -146,7 +144,7 @@ abstract class SyncStateMachine(
    * 保证操作状态机的线程 必须是 创建状态机时的线程
    * 直接抛异常
    */
-  private fun checkThread() {
+  protected fun checkThread() {
     check(thread == Thread.currentThread()) {
       TAG.plus(" only the original thread that created a stateMachine can operate.")
         .plus("original thread: " + thread)
