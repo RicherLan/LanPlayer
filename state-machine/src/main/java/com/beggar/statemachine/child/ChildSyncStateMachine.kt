@@ -8,7 +8,7 @@ import com.beggar.statemachine.Transition
 import com.beggar.statemachine.error.StateMachineException
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/9/5 7:43 下午
  * description: 子状态机(非第一层)
  */

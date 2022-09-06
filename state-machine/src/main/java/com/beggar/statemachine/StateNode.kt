@@ -1,7 +1,7 @@
 package com.beggar.statemachine
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/9/6 3:20 下午
  * description: 状态节点
  * 把一些操作(比如和状态机对接)从State中拿出来，让state只关注状态本身

@@ -5,7 +5,7 @@ import com.beggar.statemachine.StateNode
 import com.beggar.statemachine.SyncStateMachine
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/9/6 4:32 下午
  * description: 子状态机状态节点
  *
