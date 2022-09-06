@@ -204,6 +204,13 @@ abstract class SyncStateMachine(
       }
     }
 
+    // 添加一组转换
+    fun transition(name: String, from: Set<State>, to: State) {
+      from.forEach {
+        transition(name, it, to)
+      }
+    }
+
     // 添加转换
     fun transition(name: String, from: State, to: State) {
       transitions.getOrPut(from) { mutableListOf() }
