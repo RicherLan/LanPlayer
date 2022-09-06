@@ -1,5 +1,9 @@
-package com.beggar.statemachine
+package com.beggar.statemachine.child
 
+import com.beggar.statemachine.Event
+import com.beggar.statemachine.State
+import com.beggar.statemachine.SyncStateMachine
+import com.beggar.statemachine.Transition
 import com.beggar.statemachine.error.StateMachineException
 
 /**

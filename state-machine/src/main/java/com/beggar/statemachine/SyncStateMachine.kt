@@ -1,5 +1,7 @@
 package com.beggar.statemachine
 
+import com.beggar.statemachine.child.ChildStateMachineState
+
 /**
  * author: BeggarLan
  * created on: 2022/9/5 12:49 下午

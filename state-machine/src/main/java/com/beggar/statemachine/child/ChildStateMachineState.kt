@@ -1,4 +1,7 @@
-package com.beggar.statemachine
+package com.beggar.statemachine.child
+
+import com.beggar.statemachine.State
+import com.beggar.statemachine.SyncStateMachine
 
 /**
  * author: lanweihua

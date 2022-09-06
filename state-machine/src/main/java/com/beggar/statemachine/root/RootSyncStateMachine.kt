@@ -1,4 +1,9 @@
-package com.beggar.statemachine
+package com.beggar.statemachine.root
+
+import com.beggar.statemachine.Event
+import com.beggar.statemachine.State
+import com.beggar.statemachine.SyncStateMachine
+import com.beggar.statemachine.Transition
 
 /**
  * author: lanweihua
