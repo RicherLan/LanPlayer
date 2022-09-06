@@ -5,7 +5,7 @@ package com.beggar.statemachine
  * created on: 2022/9/5 12:48 下午
  * description: 描述状态
  */
-open class State(
+open class State<EnterParam>(
   val name: String,
 ) {
 
@@ -15,7 +15,7 @@ open class State(
   /**
    * 状态进入时调用
    */
-  open fun onEnter() {}
+  open fun onEnter(param: EnterParam) {}
 
   /**
    * 状态退出时调用

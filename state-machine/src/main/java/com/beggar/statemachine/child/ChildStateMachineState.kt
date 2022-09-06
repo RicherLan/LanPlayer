@@ -9,7 +9,7 @@ import com.beggar.statemachine.SyncStateMachine
  * description: 含有子状态机的状态
  *
  */
-class ChildStateMachineState(name: String) : State(name) {
+class ChildStateMachineState<EnterParam>(name: String) : State<EnterParam>(name) {
 
 
 }

@@ -6,6 +6,7 @@ import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 import com.beggar.beggarplayer.core.player.statemachine.BeggarPlayerState
 import com.beggar.beggarplayer.core.player.statemachine.PlayerState
+import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
 
@@ -42,39 +43,24 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
 
   init {
     buildStateMachine()
-    stateMachine.setStateCallback(object : StateMachine.StateCallback<PlayerState> {
-      override fun onStatePreEnter(state: PlayerState, msg: Message?) {
-        when (state) {
-          BeggarPlayerState.IdleState -> resetInner()
-          BeggarPlayerState.InitializedState -> {
-            setDataSourceInner(msg!!.obj as BeggarPlayerDataSource)
-          }
-          BeggarPlayerState.PreparingState -> prepareAsyncInner()
-          BeggarPlayerState.PreparedState -> {
-            when (msg!!.what) {
-              // 同步的方式
-              PreparedStateWay.preparedStateWaySync -> prepareInner()
-              // 异步的方式去prepare，触发prepared是回调的形式，此时已经完成了逻辑，所以不需要额外处理
-              PreparedStateWay.preparedStateWayAsync -> {}
-            }
-          }
-          BeggarPlayerState.StartedState -> startInner()
-          BeggarPlayerState.PausedState -> pauseInner()
-          BeggarPlayerState.StoppedState -> stopInner()
-          BeggarPlayerState.EndState -> releaseInner()
-        }
-      }
-
-      override fun onStateEntered(state: PlayerState) {
-        stateChangeListener?.onChange(state)
-      }
-    })
   }
 
+  // ********************* 状态机事件 *********************
+  class SetDataSource(dataSource: BeggarPlayerDataSource) : Event
+  class PrepareSync : Event
+  class PrepareAsync : Event
+  class Start : Event
+  class Pause : Event
+  class Stop : Event
+  class Complete : Event
+  class Error : Event
+  class End : Event
+  // ********************* 状态机事件 *********************
+
   // ********************* 状态 *********************
-  protected val idleState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val idleState = object : State<Any>("IdleState") {
+    override fun onEnter(param: Any) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -83,9 +69,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 设置完数据源后
-  protected val initializedState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val initializedState = object : State<Any>("IdleState") {
+    override fun onEnter(param: Any) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -180,7 +166,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
       super.onExit()
     }
   }
+
   // ********************* 状态 *********************
+
 
   /**
    * 构造状态机

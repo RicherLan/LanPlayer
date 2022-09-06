@@ -18,9 +18,9 @@ import com.beggar.statemachine.root.RootSyncStateMachine
  * @param initialState  初始状态
  */
 abstract class SyncStateMachine(
-  private val states: List<StateNode>,
-  private val transitions: Map<State, List<Transition>>,
-  protected val initialState: StateNode
+  private val states: List<StateNode<Any>>,
+  private val transitions: Map<State<Any>, List<Transition>>,
+  protected val initialState: StateNode<Any>
 ) {
 
   companion object {
@@ -28,7 +28,7 @@ abstract class SyncStateMachine(
   }
 
   // 当前状态
-  var currentState: StateNode? = null
+  var currentState: StateNode<*>? = null
 
   // 状态机是否已经stop
   var isStopped = false
@@ -58,21 +58,21 @@ abstract class SyncStateMachine(
      * 2. 保证在onExit中postEvent(event会被加入到队列)，event可以在状态迁移完成后执行
      */
     addAction {
-      exit(StopEvent())
+      exit()
     }
   }
 
   // 状态机进入
-  internal fun enter(event: Event) {
+  internal fun enter(param: Any) {
     val state = initialState
     // 先Enter，在更新当前状态
-    state.enter(event)
+    state.enter(param)
     currentState = state
   }
 
-  internal fun exit(event: Event) {
+  internal fun exit() {
     isStopped = true
-    currentState?.exit(event)
+    currentState?.exit()
     currentState = null
   }
 
@@ -148,7 +148,7 @@ abstract class SyncStateMachine(
     // 状态转换
     transitions[currentState.state]?.forEach { transition ->
       if (event.javaClass == transition.eventType) {
-        currentState.exit(event)
+        currentState.exit()
         val toState = transition.to
         toState.stateNode.enter(event)
         currentState = toState.stateNode
@@ -186,11 +186,11 @@ abstract class SyncStateMachine(
    */
   open class Builder {
 
-    var initialState: State? = null
-    val states = mutableListOf<State>()
-    val transitions = mutableMapOf<State, MutableList<Transition>>()
+    var initialState: State<Any>? = null
+    val states = mutableListOf<State<Any>>()
+    val transitions = mutableMapOf<State<Any>, MutableList<Transition>>()
 
-    fun setInitialState(state: State) = apply {
+    fun setInitialState(state: State<Any>) = apply {
       // 已经赋值过了，直接抛异常
       check(initialState == null) {
         "initialState has already set"
@@ -199,12 +199,12 @@ abstract class SyncStateMachine(
     }
 
     // 添加状态
-    fun state(state: State) = apply {
+    fun state(state: State<Any>) = apply {
       addState(StateNode(state))
     }
 
     // 添加状态
-    private fun addState(stateNode: StateNode) = apply {
+    private fun addState(stateNode: StateNode<Any>) = apply {
       // 检查state是否已经添加过
       check(!states.contains(stateNode.state)) {
         "state:" + stateNode.state.name + " has already added"
@@ -212,14 +212,14 @@ abstract class SyncStateMachine(
     }
 
     // 添加一组转换
-    fun transition(name: String, from: Set<State>, to: State, eventType: Class<*>) = apply {
+    fun transition(name: String, from: Set<State<Any>>, to: State<Any>, eventType: Class<*>) = apply {
       from.forEach {
         transition(name, it, to, eventType)
       }
     }
 
     // 添加转换
-    fun transition(name: String, from: State, to: State, eventType: Class<*>) = apply {
+    fun transition(name: String, from: State<Any>, to: State<Any>, eventType: Class<*>) = apply {
       transitions.getOrPut(from) { mutableListOf() }
         .add(Transition(name, from, to, eventType))
     }
@@ -230,13 +230,13 @@ abstract class SyncStateMachine(
      * @param childStateMachineBuilder  子状态机构造器
      */
     fun childStateMachine(
-      state: ChildStateMachineState,
+      state: ChildStateMachineState<Any>,
       childStateMachineBuilder: ChildStateMachineBuilder
     ) = apply {
       addState(ChildStateMachineStateNode(state, childStateMachineBuilder.build()))
     }
 
-    protected fun checkInitialState(): State {
+    protected fun checkInitialState(): State<Any> {
       check(states.contains(initialState)) {
         "initialState $initialState not added!"
       }

@@ -8,8 +8,8 @@ package com.beggar.statemachine
  *
  * @param state        关联的状态
  */
-open class StateNode(
-  val state: State,
+open class StateNode<EnterParam>(
+  val state: State<EnterParam>,
 ) {
 
   // 当前节点所在的状态机(当前层的状态机)
@@ -21,12 +21,12 @@ open class StateNode(
   }
 
   // 进入状态
-  open fun enter(event: Event) {
-    state.onEnter()
+  open fun enter(param: EnterParam) {
+    state.onEnter(param)
   }
 
   // 退出状态
-  open fun exit(event: Event) {
+  open fun exit() {
     state.onExit()
   }
 

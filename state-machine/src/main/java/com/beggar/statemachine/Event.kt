@@ -9,6 +9,3 @@ interface Event
 
 // 状态机启动的事件
 class InitialEvent : Event
-
-// 状态机stop的事件
-class StopEvent : Event

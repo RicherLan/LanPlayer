@@ -13,10 +13,10 @@ import com.beggar.statemachine.SyncStateMachine
  * @param stateMachine       当前节点所在的状态机(当前层的状态机)
  * @param childStateMachine  当前节点的子状态机
  */
-class ChildStateMachineStateNode(
-  state: State,
+class ChildStateMachineStateNode<EnterParam>(
+  state: State<EnterParam>,
   val childStateMachine: SyncStateMachine
-) : StateNode(state) {
+) : StateNode<EnterParam>(state) {
 
   private val childMachine = childStateMachine as ChildSyncStateMachine
 
@@ -26,15 +26,15 @@ class ChildStateMachineStateNode(
   }
 
   // 自己先enter，然后子状态机enter
-  override fun enter(event: Event) {
-    super.enter(event)
-    childMachine.enter(event)
+  override fun enter(param: EnterParam) {
+    super.enter(param)
+    childMachine.enter(param)
   }
 
   // 子状态机先exit，然后自己在exit
-  override fun exit(event: Event) {
-    childMachine.exit(event)
-    super.exit(event)
+  override fun exit() {
+    childMachine.exit()
+    super.exit()
   }
 
 }
