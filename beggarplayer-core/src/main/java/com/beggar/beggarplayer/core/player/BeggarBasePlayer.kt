@@ -6,8 +6,8 @@ import com.beggar.beggarplayer.core.base.StateMachine
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 import com.beggar.beggarplayer.core.player.statemachine.BeggarPlayerState
-import com.beggar.beggarplayer.core.player.statemachine.BeggarPlayerStateMachine
 import com.beggar.beggarplayer.core.player.statemachine.PlayerState
+import com.beggar.statemachine.SyncStateMachine
 
 /**
  * author: BeggarLan
@@ -35,12 +35,13 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 状态机
-  private var stateMachine = BeggarPlayerStateMachine()
+  private lateinit var stateMachine
 
   // 状态更改监听
   private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
 
   init {
+    buildStateMachine()
     stateMachine.setStateCallback(object : StateMachine.StateCallback<PlayerState> {
       override fun onStatePreEnter(state: PlayerState, msg: Message?) {
         when (state) {
@@ -68,6 +69,14 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
         stateChangeListener?.onChange(state)
       }
     })
+  }
+
+  /**
+   * 构造状态机
+   */
+  private fun buildStateMachine() {
+    val builder = SyncStateMachine.Builder()
+      .addState().
   }
 
   override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {

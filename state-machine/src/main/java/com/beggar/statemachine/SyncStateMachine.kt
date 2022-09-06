@@ -199,7 +199,7 @@ abstract class SyncStateMachine(
     }
 
     // 添加状态
-    fun addState(stateNode: StateNode) {
+    fun addState(stateNode: StateNode) = apply {
       // 检查state是否已经添加过
       check(!states.contains(stateNode.state)) {
         "state:" + stateNode.state.name + " has already added"
@@ -207,14 +207,14 @@ abstract class SyncStateMachine(
     }
 
     // 添加一组转换
-    fun transition(name: String, from: Set<State>, to: State, eventType: Class<*>) {
+    fun transition(name: String, from: Set<State>, to: State, eventType: Class<*>) = apply {
       from.forEach {
         transition(name, it, to, eventType)
       }
     }
 
     // 添加转换
-    fun transition(name: String, from: State, to: State, eventType: Class<*>) {
+    fun transition(name: String, from: State, to: State, eventType: Class<*>) = apply {
       transitions.getOrPut(from) { mutableListOf() }
         .add(Transition(name, from, to, eventType))
     }
@@ -227,7 +227,7 @@ abstract class SyncStateMachine(
     fun childStateMachine(
       state: ChildStateMachineState,
       childStateMachineBuilder: ChildStateMachineBuilder
-    ) {
+    ) = apply {
       addState(ChildStateMachineStateNode(state, childStateMachineBuilder.build()))
     }
 

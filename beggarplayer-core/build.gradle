@@ -38,5 +38,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
     implementation("com.google.guava:guava:31.1-jre")
+    // 状态机
+    implementation project(":state-machine")
 
 }
