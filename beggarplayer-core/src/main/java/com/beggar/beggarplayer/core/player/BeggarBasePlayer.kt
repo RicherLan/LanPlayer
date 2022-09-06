@@ -2,11 +2,11 @@ package com.beggar.beggarplayer.core.player
 
 import android.os.Message
 import androidx.annotation.IntDef
-import com.beggar.beggarplayer.core.base.StateMachine
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 import com.beggar.beggarplayer.core.player.statemachine.BeggarPlayerState
 import com.beggar.beggarplayer.core.player.statemachine.PlayerState
+import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
 
 /**
@@ -71,12 +71,135 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
     })
   }
 
+  // ********************* 状态 *********************
+  protected val idleState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 设置完数据源后
+  protected val initializedState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 准备中
+  protected val preparingState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 准备完成
+  protected val preparedState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 开始播放
+  protected val startedState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 暂停
+  protected val pausedState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 停止
+  protected val stoppedState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 完成
+  protected val completedState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 出错
+  protected val errorState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+
+  // 结束(release后)
+  protected val endState = object : State("IdleState") {
+    override fun onEnter() {
+      super.onEnter()
+    }
+
+    override fun onExit() {
+      super.onExit()
+    }
+  }
+  // ********************* 状态 *********************
+
   /**
    * 构造状态机
    */
   private fun buildStateMachine() {
     val builder = SyncStateMachine.Builder()
-      .addState().
+      .setInitialState(idleState)
+      .state(idleState)
+      .state(initializedState)
+      .state(preparingState)
+      .state(preparedState)
+      .state(startedState)
+      .state(pausedState)
+      .state(stoppedState)
+      .state(completedState)
+      .state(errorState)
+      .state(endState)
+
+    stateMachine = builder.build()
   }
 
   override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
