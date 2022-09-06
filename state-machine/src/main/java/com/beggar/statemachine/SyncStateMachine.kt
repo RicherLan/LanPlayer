@@ -162,4 +162,44 @@ abstract class SyncStateMachine(
     }
   }
 
+  /**
+   * 构造器
+   */
+  private class BasicBuilder {
+
+    var initialState: State? = null
+    val states = mutableListOf<State>()
+    val transitions = mutableMapOf<State, MutableList<Transition>>()
+
+    fun setInitialState(state: State) = apply {
+      // 已经赋值过了，直接抛异常
+      check(initialState == null) {
+        "initialState has already set"
+      }
+      initialState = state
+    }
+
+    // 添加状态
+    fun addState(state: State) {
+      // 检查state是否已经添加过
+      check(!states.contains(state)) {
+        "state:" + state.name + " has already added"
+      }
+    }
+
+    // 添加转换
+    fun transition(name: String, from: State, to: State) {
+      transitions.getOrPut(from) { mutableListOf() }
+        .add(Transition(name, from, to))
+    }
+
+    /**
+     * 添加子状态机
+     */
+    fun childStateMachine() {
+
+    }
+
+  }
+
 }
