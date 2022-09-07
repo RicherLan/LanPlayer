@@ -13,12 +13,17 @@ open class State<EnterParam>(
   internal lateinit var stateNode: StateNode
 
   /**
-   * 状态进入时调用
+   * 状态进入时调用(该函数结束后currentState才会指向当前状态)
+   * 做一些初始化的操作
    */
   open fun onEnter(param: EnterParam) {}
 
   /**
    * 状态退出时调用
+   *
+   * 该函数结束后currentState才会指向其他值：
+   * 1.另一个状态(另一个状态onEnter())
+   * 2.null(状态机stop)
    */
   open fun onExit() {}
 
