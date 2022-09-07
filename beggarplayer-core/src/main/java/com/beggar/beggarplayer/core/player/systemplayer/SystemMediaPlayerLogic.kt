@@ -3,7 +3,6 @@ package com.beggar.beggarplayer.core.player.systemplayer
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import com.beggar.beggarplayer.core.base.BeggarPlayerLogger
-import com.beggar.beggarplayer.core.player.IBeggarPlayer
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
@@ -21,6 +20,9 @@ class SystemMediaPlayerLogic : IBeggarPlayerLogic {
 
   // 系统播放器实例
   private val mediaPlayer = MediaPlayer()
+
+  // 播放器的一些回调
+  private var playerCallback: IBeggarPlayerLogic.IPlayerCallback? = null
 
   init {
     // 初始化视频播放器
@@ -43,7 +45,7 @@ class SystemMediaPlayerLogic : IBeggarPlayerLogic {
     // 数据源准备好时回调
     mediaPlayer.setOnPreparedListener {
       BeggarPlayerLogger.log(TAG, "onPrepared")
-      onPreparedByAsync()
+      playerCallback?.onPrepared()
     }
     // 在网络流缓冲区的状态发生变化时回调
     mediaPlayer.setOnBufferingUpdateListener(object : MediaPlayer.OnBufferingUpdateListener {
@@ -77,16 +79,14 @@ class SystemMediaPlayerLogic : IBeggarPlayerLogic {
     mediaPlayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
       override fun onCompletion(mp: MediaPlayer?) {
         BeggarPlayerLogger.log(TAG, "onCompletion")
-        // 驱动状态
-        ooCompleted()
+        playerCallback?.onCompletion()
       }
     })
     // error时回调
     mediaPlayer.setOnErrorListener(object : MediaPlayer.OnErrorListener {
       override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         BeggarPlayerLogger.log(TAG, "[onError][what=".plus(what).plus("]"))
-        // 驱动状态
-        onError()
+        playerCallback?.onError()
         return false
       }
     })
@@ -94,6 +94,10 @@ class SystemMediaPlayerLogic : IBeggarPlayerLogic {
 
   override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
     TODO("Not yet implemented")
+  }
+
+  override fun setPlayerCallback(callback: IBeggarPlayerLogic.IPlayerCallback) {
+    playerCallback = callback
   }
 
   override fun setDataSource(dataSource: BeggarPlayerDataSource) {

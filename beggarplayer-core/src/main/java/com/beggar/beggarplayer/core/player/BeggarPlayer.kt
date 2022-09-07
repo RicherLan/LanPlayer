@@ -50,7 +50,31 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
    * 默认采用系统播放器实现
    */
   private fun buildPlayerLogic(): IBeggarPlayerLogic {
-    return config.playerLogic ?: SystemMediaPlayerLogic()
+    // 监听播放器的事件
+    val callback = object : IBeggarPlayerLogic.IPlayerCallback {
+      override fun onPrepared() {
+        sendEvent(Prepared())
+      }
+
+      override fun onCompletion() {
+        sendEvent(Complete())
+      }
+
+      override fun onError() {
+        sendEvent(Error())
+      }
+    }
+
+    // 替换为外面的实现
+    if (config.playerLogic != null) {
+      config.playerLogic.setPlayerCallback(callback)
+      return config.playerLogic
+    }
+
+    // 默认实现
+    val systemMediaPlayerLogic = SystemMediaPlayerLogic()
+    systemMediaPlayerLogic.setPlayerCallback(callback)
+    return systemMediaPlayerLogic
   }
 
   /**
@@ -242,16 +266,6 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   override fun stop() {
     sendEvent(Stop())
-  }
-
-  // 子类在完成时调用
-  protected fun ooCompleted() {
-    sendEvent(Complete())
-  }
-
-  // 子类在出错时调用
-  protected fun onError() {
-    sendEvent(Error())
   }
 
   override fun release() {
