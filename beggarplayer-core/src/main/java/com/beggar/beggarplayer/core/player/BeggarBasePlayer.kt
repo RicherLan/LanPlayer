@@ -1,11 +1,8 @@
 package com.beggar.beggarplayer.core.player
 
-import android.os.Message
 import androidx.annotation.IntDef
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
-import com.beggar.beggarplayer.core.player.statemachine.BeggarPlayerState
-import com.beggar.beggarplayer.core.player.statemachine.PlayerState
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
@@ -36,7 +33,7 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 状态机
-  private lateinit var stateMachine
+  private lateinit var stateMachine: SyncStateMachine
 
   // 状态更改监听
   private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
@@ -46,15 +43,17 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // ********************* 状态机事件 *********************
-  class SetDataSource(dataSource: BeggarPlayerDataSource) : Event
-  class PrepareSync : Event
-  class PrepareAsync : Event
-  class Start : Event
-  class Pause : Event
-  class Stop : Event
-  class Complete : Event
-  class Error : Event
-  class End : Event
+  class Reset : Event // 进idle
+  class SetDataSource(dataSource: BeggarPlayerDataSource) : Event // 设置数据源
+  class PrepareSync : Event // 同步步prepare
+  class PrepareAsync : Event // 异步prepare
+  class Prepared : Event // prepare完成
+  class Start : Event // 开始播放
+  class Pause : Event // 暂停播放
+  class Stop : Event // 停止播放
+  class Complete : Event // 播放完毕
+  class Error : Event // 出错
+  class End : Event // 这里就结束播放器的生命了
   // ********************* 状态机事件 *********************
 
   // ********************* 状态 *********************
@@ -69,8 +68,8 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 设置完数据源后
-  protected val initializedState = object : State<Any>("IdleState") {
-    override fun onEnter(param: Any) {
+  protected val initializedState = object : State<SetDataSource>("IdleState") {
+    override fun onEnter(param: SetDataSource) {
       super.onEnter(param)
     }
 
@@ -80,9 +79,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 准备中
-  protected val preparingState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val preparingState = object : State<PrepareAsync>("IdleState") {
+    override fun onEnter(param: PrepareAsync) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -91,9 +90,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 准备完成
-  protected val preparedState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val preparedState = object : State<Prepared>("IdleState") {
+    override fun onEnter(param: Prepared) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -102,9 +101,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 开始播放
-  protected val startedState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val startedState = object : State<Start>("IdleState") {
+    override fun onEnter(param: Start) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -113,9 +112,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 暂停
-  protected val pausedState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val pausedState = object : State<Pause>("IdleState") {
+    override fun onEnter(param: Pause) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -124,9 +123,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 停止
-  protected val stoppedState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val stoppedState = object : State<Stop>("IdleState") {
+    override fun onEnter(param: Stop) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -135,9 +134,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 完成
-  protected val completedState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val completedState = object : State<Complete>("IdleState") {
+    override fun onEnter(param: Complete) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -146,9 +145,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 出错
-  protected val errorState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val errorState = object : State<Error>("IdleState") {
+    override fun onEnter(param: Error) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -157,9 +156,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   }
 
   // 结束(release后)
-  protected val endState = object : State("IdleState") {
-    override fun onEnter() {
-      super.onEnter()
+  protected val endState = object : State<End>("IdleState") {
+    override fun onEnter(param: End) {
+      super.onEnter(param)
     }
 
     override fun onExit() {
@@ -194,59 +193,61 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
     stateChangeListener = listener
   }
 
-  // ********************* 生命周期相关 *********************
-  override fun setDataSource(dataSource: BeggarPlayerDataSource) {
-    val message = Message.obtain()
-    message.obj = dataSource
-    stateMachine.transitionTo(BeggarPlayerState.InitializedState, message)
+  /**
+   * 向状态机发送事件
+   */
+  private fun sendEvent(event: Event) {
+    stateMachine.sendEvent(event)
   }
 
-  override fun prepare() {
-    val message = Message.obtain()
-    message.what = PreparedStateWay.preparedStateWaySync
-    stateMachine.transitionTo(BeggarPlayerState.PreparedState, message)
+  // ********************* 生命周期相关 *********************
+  override fun reset() {
+    sendEvent(Reset())
+  }
+
+  override fun setDataSource(dataSource: BeggarPlayerDataSource) {
+    sendEvent(SetDataSource(dataSource))
+  }
+
+  override fun prepareSync() {
+    sendEvent(PrepareSync())
   }
 
   override fun prepareAsync() {
-    stateMachine.transitionTo(BeggarPlayerState.PreparingState)
-  }
-
-  override fun start() {
-    stateMachine.transitionTo(BeggarPlayerState.StartedState)
-  }
-
-  override fun pause() {
-    stateMachine.transitionTo(BeggarPlayerState.PausedState)
-  }
-
-  override fun stop() {
-    stateMachine.transitionTo(BeggarPlayerState.StoppedState)
-  }
-
-  override fun reset() {
-    stateMachine.transitionTo(BeggarPlayerState.IdleState)
-  }
-
-  override fun release() {
-    stateMachine.transitionTo(BeggarPlayerState.EndState)
+    sendEvent(PrepareAsync())
   }
 
   // 子类在异步prepare完成时调用
   protected fun onPreparedByAsync() {
-    val message = Message.obtain()
-    message.what = PreparedStateWay.preparedStateWayAsync
-    stateMachine.transitionTo(BeggarPlayerState.PreparedState)
+    sendEvent(Prepared())
+  }
+
+  override fun start() {
+    sendEvent(Start())
+  }
+
+  override fun pause() {
+    sendEvent(Pause())
+  }
+
+  override fun stop() {
+    sendEvent(Stop())
   }
 
   // 子类在完成时调用
   protected fun ooCompleted() {
-    stateMachine.transitionTo(BeggarPlayerState.CompletedState)
+    sendEvent(Complete())
   }
 
   // 子类在出错时调用
-  protected fun ooError() {
-    stateMachine.transitionTo(BeggarPlayerState.ErrorState)
+  protected fun onError() {
+    sendEvent(Error())
   }
+
+  override fun release() {
+    sendEvent(End())
+  }
+
   // ********************* 生命周期相关 *********************
 
 

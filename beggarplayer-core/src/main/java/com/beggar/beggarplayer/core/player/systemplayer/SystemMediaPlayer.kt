@@ -84,7 +84,7 @@ class SystemMediaPlayer : BeggarBasePlayer() {
       override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         BeggarPlayerLogger.log(TAG, "[onError][what=".plus(what).plus("]"))
         // 驱动状态
-        ooError()
+        onError()
         return false
       }
     })

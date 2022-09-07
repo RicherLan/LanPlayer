@@ -22,9 +22,9 @@ interface IBeggarPlayer {
   fun setDataSource(dataSource: BeggarPlayerDataSource)
 
   /**
-   * 准备
+   * 同步准备
    */
-  fun prepare()
+  fun prepareSync()
 
   /**
    * 异步准备

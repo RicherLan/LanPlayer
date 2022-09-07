@@ -199,12 +199,12 @@ abstract class SyncStateMachine(
     }
 
     // 添加状态
-    fun state(state: State<Any>) = apply {
+    fun state(state: State<*>) = apply {
       addState(StateNode(state))
     }
 
     // 添加状态
-    private fun addState(stateNode: StateNode<Any>) = apply {
+    private fun addState(stateNode: StateNode<*>) = apply {
       // 检查state是否已经添加过
       check(!states.contains(stateNode.state)) {
         "state:" + stateNode.state.name + " has already added"
