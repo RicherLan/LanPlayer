@@ -11,10 +11,10 @@ package com.beggar.player.common.collection
  */
 class SafeIterableList<T> : MutableCollection<T> {
 
-  // 原数据, arrayList
+  // 只要copy过一次，该list会同步更新为新的
   private var list = mutableListOf<T>()
 
-  // copy
+  // copy-list
   private val modifiableList: MutableList<T>
     get() {
       // 不为0表示：有正在使用迭代器的 && list没有copy过
