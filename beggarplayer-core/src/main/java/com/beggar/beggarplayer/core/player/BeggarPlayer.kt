@@ -129,6 +129,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
     override fun onEnter(param: SetDataSource) {
       super.onEnter(param)
       playerLogic.setDataSource(param.dataSource)
+      observerDispatcher.onStateChange(BeggarPlayerState.InitializedState)
     }
 
     override fun onExit() {
@@ -140,6 +141,8 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val preparingState = object : State<Prepare>("preparingState") {
     override fun onEnter(param: Prepare) {
       super.onEnter(param)
+      observerDispatcher.onStateChange(BeggarPlayerState.PreparingState)
+
       // 同步prepare完毕，直接发送prepare完成事件
       if (param.isSync) {
         playerLogic.prepareSync()
@@ -162,6 +165,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val preparedState = object : State<Prepared>("preparedState") {
     override fun onEnter(param: Prepared) {
       super.onEnter(param)
+      observerDispatcher.onStateChange(BeggarPlayerState.PreparedState)
     }
 
     override fun onExit() {
@@ -174,6 +178,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
     override fun onEnter(param: Start) {
       super.onEnter(param)
       playerLogic.start()
+      observerDispatcher.onStateChange(BeggarPlayerState.StartedState)
     }
 
     override fun onExit() {
@@ -186,6 +191,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
     override fun onEnter(param: Pause) {
       super.onEnter(param)
       playerLogic.pause()
+      observerDispatcher.onStateChange(BeggarPlayerState.PausedState)
     }
 
     override fun onExit() {
@@ -198,6 +204,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
     override fun onEnter(param: Stop) {
       super.onEnter(param)
       playerLogic.stop()
+      observerDispatcher.onStateChange(BeggarPlayerState.StoppedState)
     }
 
     override fun onExit() {
@@ -209,6 +216,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val completedState = object : State<Complete>("completedState") {
     override fun onEnter(param: Complete) {
       super.onEnter(param)
+      observerDispatcher.onStateChange(BeggarPlayerState.CompletedState)
     }
 
     override fun onExit() {
@@ -220,6 +228,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val errorState = object : State<Error>("errorState") {
     override fun onEnter(param: Error) {
       super.onEnter(param)
+      observerDispatcher.onStateChange(BeggarPlayerState.ErrorState)
     }
 
     override fun onExit() {
@@ -232,6 +241,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
     override fun onEnter(param: End) {
       super.onEnter(param)
       playerLogic.release()
+      observerDispatcher.onStateChange(BeggarPlayerState.EndState)
     }
 
     override fun onExit() {
