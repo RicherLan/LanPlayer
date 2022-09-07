@@ -3,7 +3,8 @@ package com.beggar.beggarplayer.core.player.systemplayer
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import com.beggar.beggarplayer.core.base.BeggarPlayerLogger
-import com.beggar.beggarplayer.core.player.BeggarBasePlayer
+import com.beggar.beggarplayer.core.player.IBeggarPlayer
+import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 
@@ -12,7 +13,7 @@ import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeList
  * created on: 2022/8/30 8:33 下午
  * description: 采用系统播放器实现
  */
-class SystemMediaPlayer : BeggarBasePlayer() {
+class SystemMediaPlayer : IBeggarPlayerLogic {
 
   companion object {
     private const val TAG = "SystemMediaPlayer"
@@ -91,65 +92,60 @@ class SystemMediaPlayer : BeggarBasePlayer() {
     })
   }
 
-  // 播放器的逻辑
-  override fun buildPlayerLogic(): PlayerLogic {
-    return object : PlayerLogic {
-      override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
-        TODO("Not yet implemented")
-      }
+  override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
+    TODO("Not yet implemented")
+  }
 
-      override fun setDataSource(dataSource: BeggarPlayerDataSource) {
-        TODO("Not yet implemented")
-      }
+  override fun setDataSource(dataSource: BeggarPlayerDataSource) {
+    TODO("Not yet implemented")
+  }
 
-      override fun prepareSync() {
-        TODO("Not yet implemented")
-      }
+  override fun prepareSync() {
+    TODO("Not yet implemented")
+  }
 
-      override fun prepareAsync() {
-        TODO("Not yet implemented")
-      }
+  override fun prepareAsync() {
+    TODO("Not yet implemented")
+  }
 
-      override fun start() {
-        TODO("Not yet implemented")
-      }
+  override fun start() {
+    TODO("Not yet implemented")
+  }
 
-      override fun pause() {
-        TODO("Not yet implemented")
-      }
+  override fun pause() {
+    TODO("Not yet implemented")
+  }
 
-      override fun stop() {
-        TODO("Not yet implemented")
-      }
+  override fun stop() {
+    TODO("Not yet implemented")
+  }
 
-      override fun reset() {
-        TODO("Not yet implemented")
-      }
+  override fun reset() {
+    TODO("Not yet implemented")
+  }
 
-      override fun release() {
-        TODO("Not yet implemented")
-      }
+  override fun release() {
+    TODO("Not yet implemented")
+  }
 
-      override fun seekTo(timeMs: Long) {
-        TODO("Not yet implemented")
-      }
+  override fun seekTo(timeMs: Long) {
+    TODO("Not yet implemented")
+  }
 
-      override fun setVolume(volume: Float) {
-        TODO("Not yet implemented")
-      }
+  override fun setVolume(volume: Float) {
+    TODO("Not yet implemented")
+  }
 
-      override fun setLoop(loop: Boolean) {
-        TODO("Not yet implemented")
-      }
+  override fun setLoop(loop: Boolean) {
+    TODO("Not yet implemented")
+  }
 
-      override fun getVideoWidth(): Int {
-        TODO("Not yet implemented")
-      }
+  override fun getVideoWidth(): Int {
+    TODO("Not yet implemented")
+  }
 
-      override fun getVideoHeight(): Int {
-        TODO("Not yet implemented")
-      }
-    }
+  override fun getVideoHeight(): Int {
+    TODO("Not yet implemented")
   }
 
 }

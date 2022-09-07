@@ -14,20 +14,19 @@ import com.beggar.statemachine.SyncStateMachine
  * 2. 播放器方法实现(其实是子类实现) {@see PlayerLogic}
  * 2. 提供播放器状态监听
  */
-abstract class BeggarBasePlayer : IBeggarPlayer {
+class BeggarPlayer : IBeggarPlayer {
+
+  /**
+   * 具体的播放器子类实现
+   */
+  protected interface IPlayerLogic : IBeggarPlayer
 
   companion object {
     private const val TAG = "BeggarBasePlayer"
   }
 
-  /**
-   * 具体的播放器子类实现
-   */
-  protected interface PlayerLogic : IBeggarPlayer
-
-
   // 播放器具体逻辑
-  private var playerLogic: PlayerLogic
+  private val playerLogic: IBeggarPlayerLogic
 
   // 状态机
   private var stateMachine: SyncStateMachine
@@ -36,11 +35,9 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
   private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
 
   init {
-    playerLogic = buildPlayerLogic()
+//    playerLogic = buildPlayerLogic()
     stateMachine = buildStateMachine()
   }
-
-  protected abstract fun buildPlayerLogic(): PlayerLogic
 
   /**
    * 构造状态机
