@@ -138,7 +138,17 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val preparingState = object : State<Prepare>("preparingState") {
     override fun onEnter(param: Prepare) {
       super.onEnter(param)
-      playerLogic.prepareAsync()
+      // 同步prepare完毕，直接发送prepare完成事件
+      if (param.isSync) {
+        playerLogic.prepareSync()
+        sendEvent(Prepared())
+      } else {
+        /**
+         * 异步prepare完成是在播放器的回调中
+         * @see IBeggarPlayerLogic.IPlayerCallback.onPrepared
+         */
+        playerLogic.prepareAsync()
+      }
     }
 
     override fun onExit() {
@@ -161,6 +171,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val startedState = object : State<Start>("startedState") {
     override fun onEnter(param: Start) {
       super.onEnter(param)
+      playerLogic.start()
     }
 
     override fun onExit() {
@@ -172,6 +183,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val pausedState = object : State<Pause>("pausedState") {
     override fun onEnter(param: Pause) {
       super.onEnter(param)
+      playerLogic.pause()
     }
 
     override fun onExit() {
@@ -183,6 +195,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val stoppedState = object : State<Stop>("stoppedState") {
     override fun onEnter(param: Stop) {
       super.onEnter(param)
+      playerLogic.stop()
     }
 
     override fun onExit() {
@@ -216,6 +229,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val endState = object : State<End>("endState") {
     override fun onEnter(param: End) {
       super.onEnter(param)
+      playerLogic.release()
     }
 
     override fun onExit() {
