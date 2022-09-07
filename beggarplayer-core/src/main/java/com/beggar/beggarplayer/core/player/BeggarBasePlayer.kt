@@ -1,6 +1,5 @@
 package com.beggar.beggarplayer.core.player
 
-import androidx.annotation.IntDef
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 import com.beggar.statemachine.Event
@@ -11,25 +10,13 @@ import com.beggar.statemachine.SyncStateMachine
  * author: BeggarLan
  * created on: 2022/8/30 8:51 下午
  * description: 播放器基类
- * 1. 状态流转封装
+ * 1. 状态机构建和维护
+ * 2.
  */
 abstract class BeggarBasePlayer : IBeggarPlayer {
 
   companion object {
     private const val TAG = "BeggarBasePlayer"
-  }
-
-  // 进入Prepared状态的方式
-  @IntDef(
-    PreparedStateWay.preparedStateWaySync,
-    PreparedStateWay.preparedStateWayAsync
-  )
-  @Retention(AnnotationRetention.SOURCE)
-  annotation class PreparedStateWay {
-    companion object {
-      const val preparedStateWaySync = 1 // 同步
-      const val preparedStateWayAsync = 2 // 异步
-    }
   }
 
   // 状态机

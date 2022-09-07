@@ -16,3 +16,4 @@ rootProject.name = "LanPlayer"
 include ':app'
 include ':beggarplayer-core'
 include ':state-machine'
+include ':common'
