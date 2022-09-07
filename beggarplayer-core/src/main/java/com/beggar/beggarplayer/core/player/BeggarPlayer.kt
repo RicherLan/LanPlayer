@@ -2,7 +2,8 @@ package com.beggar.beggarplayer.core.player
 
 import com.beggar.beggarplayer.core.player.config.BeggarPlayerConfig
 import com.beggar.beggarplayer.core.player.datasource.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerStateObsever
+import com.beggar.beggarplayer.core.player.observer.BeggarPlayerObserverDispatcher
+import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerObserver
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
@@ -37,8 +38,8 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   // 状态机
   private var stateMachine: SyncStateMachine
 
-  // 状态更改监听
-  private var stateChangeListener: IBeggarPlayerStateObsever? = null
+  // 播放器事件分发
+  private val observerDispatcher = BeggarPlayerObserverDispatcher()
 
   init {
     playerLogic = buildPlayerLogic()
@@ -115,6 +116,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   protected val idleState = object : State<Any>("IdleState") {
     override fun onEnter(param: Any) {
       super.onEnter(param)
+      observerDispatcher.onStateChange(BeggarPlayerState.IdleState)
     }
 
     override fun onExit() {
@@ -239,8 +241,12 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   // ********************* 状态 *********************
 
-  override fun setStateListener(listener: IBeggarPlayerStateObsever?) {
-    stateChangeListener = listener
+  override fun registerObserver(observer: IBeggarPlayerObserver) {
+    observerDispatcher.registerObserver(observer)
+  }
+
+  override fun unregisterObserver(observer: IBeggarPlayerObserver) {
+    observerDispatcher.unregisterObserver(observer)
   }
 
   /**

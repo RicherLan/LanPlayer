@@ -5,7 +5,7 @@ import android.media.MediaPlayer
 import com.beggar.beggarplayer.core.base.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.player.datasource.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerStateObsever
+import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerObserver
 
 /**
  * author: BeggarLan
@@ -92,7 +92,7 @@ class SystemMediaPlayerLogic : IBeggarPlayerLogic {
     })
   }
 
-  override fun setStateListener(listener: IBeggarPlayerStateObsever?) {
+  override fun setStateObserver(listener: IBeggarPlayerObserver?) {
     TODO("Not yet implemented")
   }
 

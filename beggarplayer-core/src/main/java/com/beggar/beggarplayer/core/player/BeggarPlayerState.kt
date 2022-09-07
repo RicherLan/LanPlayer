@@ -8,15 +8,15 @@ package com.beggar.beggarplayer.core.player
 @Retention(AnnotationRetention.SOURCE)
 annotation class BeggarPlayerState {
   companion object {
-    const val idleState = 1
-    const val initializedState = 2
-    const val preparingState = 3
-    const val preparedState = 4
-    const val startedState = 5
-    const val pausedState = 6
-    const val stoppedState = 7
-    const val completedState = 8
-    const val errorState = 9
-    const val endState = 10
+    const val IdleState = 1
+    const val InitializedState = 2
+    const val PreparingState = 3
+    const val PreparedState = 4
+    const val StartedState = 5
+    const val PausedState = 6
+    const val StoppedState = 7
+    const val CompletedState = 8
+    const val ErrorState = 9
+    const val EndState = 10
   }
 }
