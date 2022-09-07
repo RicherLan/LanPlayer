@@ -14,7 +14,7 @@ import com.beggar.statemachine.error.StateMachineException
  */
 class ChildSyncStateMachine(
   states: List<StateNode>,
-  transitions: Map<State, List<Transition>>,
+  transitions: Map<State<*>, List<Transition>>,
   initialState: StateNode
 ) : SyncStateMachine(states, transitions, initialState) {
 

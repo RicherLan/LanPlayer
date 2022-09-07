@@ -14,7 +14,7 @@ import com.beggar.statemachine.Transition
  */
 class RootSyncStateMachine(
   states: List<StateNode>,
-  transitions: Map<State, List<Transition>>,
+  transitions: Map<State<*>, List<Transition>>,
   initialState: StateNode
 ) : SyncStateMachine(states, transitions, initialState) {
 

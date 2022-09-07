@@ -8,8 +8,8 @@ package com.beggar.statemachine
  *
  * @param state        关联的状态
  */
-open class StateNode<EnterParam>(
-  val state: State<EnterParam>,
+open class StateNode(
+  val state: State<*>,
 ) {
 
   // 当前节点所在的状态机(当前层的状态机)
@@ -21,8 +21,9 @@ open class StateNode<EnterParam>(
   }
 
   // 进入状态
-  open fun enter(param: EnterParam) {
-    state.onEnter(param)
+  open fun enter(param: Any) {
+    @Suppress("UNCHECKED_CAST")
+    (state as State<Any>).onEnter(param)
   }
 
   // 退出状态

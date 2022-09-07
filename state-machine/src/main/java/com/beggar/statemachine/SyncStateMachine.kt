@@ -18,9 +18,9 @@ import com.beggar.statemachine.root.RootSyncStateMachine
  * @param initialState  初始状态
  */
 abstract class SyncStateMachine(
-  private val states: List<StateNode<Any>>,
-  private val transitions: Map<State<Any>, List<Transition>>,
-  protected val initialState: StateNode<Any>
+  private val states: List<StateNode>,
+  private val transitions: Map<State<*>, List<Transition>>,
+  protected val initialState: StateNode
 ) {
 
   companion object {
@@ -28,7 +28,7 @@ abstract class SyncStateMachine(
   }
 
   // 当前状态
-  var currentState: StateNode<*>? = null
+  var currentState: StateNode? = null
 
   // 状态机是否已经stop
   var isStopped = false
@@ -186,9 +186,9 @@ abstract class SyncStateMachine(
    */
   open class Builder {
 
-    var initialState: State<Any>? = null
-    val states = mutableListOf<State<Any>>()
-    val transitions = mutableMapOf<State<Any>, MutableList<Transition>>()
+    var initialState: State<*>? = null
+    val states = mutableListOf<State<*>>()
+    val transitions = mutableMapOf<State<*>, MutableList<Transition>>()
 
     fun setInitialState(state: State<Any>) = apply {
       // 已经赋值过了，直接抛异常
@@ -204,7 +204,7 @@ abstract class SyncStateMachine(
     }
 
     // 添加状态
-    private fun addState(stateNode: StateNode<*>) = apply {
+    private fun addState(stateNode: StateNode) = apply {
       // 检查state是否已经添加过
       check(!states.contains(stateNode.state)) {
         "state:" + stateNode.state.name + " has already added"
@@ -230,13 +230,13 @@ abstract class SyncStateMachine(
      * @param childStateMachineBuilder  子状态机构造器
      */
     fun childStateMachine(
-      state: ChildStateMachineState<Any>,
+      state: ChildStateMachineState<*>,
       childStateMachineBuilder: ChildStateMachineBuilder
     ) = apply {
       addState(ChildStateMachineStateNode(state, childStateMachineBuilder.build()))
     }
 
-    protected fun checkInitialState(): State<Any> {
+    protected fun checkInitialState(): State<*> {
       check(states.contains(initialState)) {
         "initialState $initialState not added!"
       }
