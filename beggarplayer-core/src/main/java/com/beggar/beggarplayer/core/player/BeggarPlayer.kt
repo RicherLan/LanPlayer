@@ -100,9 +100,8 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   // ********************* 状态机事件 *********************
   class Reset : Event // 进idle
-  class SetDataSource(dataSource: BeggarPlayerDataSource) : Event // 设置数据源
-  class PrepareSync : Event // 同步步prepare
-  class PrepareAsync : Event // 异步prepare
+  class SetDataSource(val dataSource: BeggarPlayerDataSource) : Event // 设置数据源
+  class Prepare(val isSync: Boolean) : Event // 区分同步和异步
   class Prepared : Event // prepare完成
   class Start : Event // 开始播放
   class Pause : Event // 暂停播放
@@ -124,9 +123,10 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 设置完数据源后
-  protected val initializedState = object : State<SetDataSource>("IdleState") {
+  protected val initializedState = object : State<SetDataSource>("initializedState") {
     override fun onEnter(param: SetDataSource) {
       super.onEnter(param)
+      playerLogic.setDataSource(param.dataSource)
     }
 
     override fun onExit() {
@@ -135,9 +135,10 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 准备中
-  protected val preparingState = object : State<PrepareAsync>("IdleState") {
-    override fun onEnter(param: PrepareAsync) {
+  protected val preparingState = object : State<Prepare>("preparingState") {
+    override fun onEnter(param: Prepare) {
       super.onEnter(param)
+      playerLogic.prepareAsync()
     }
 
     override fun onExit() {
@@ -146,7 +147,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 准备完成
-  protected val preparedState = object : State<Prepared>("IdleState") {
+  protected val preparedState = object : State<Prepared>("preparedState") {
     override fun onEnter(param: Prepared) {
       super.onEnter(param)
     }
@@ -157,7 +158,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 开始播放
-  protected val startedState = object : State<Start>("IdleState") {
+  protected val startedState = object : State<Start>("startedState") {
     override fun onEnter(param: Start) {
       super.onEnter(param)
     }
@@ -168,7 +169,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 暂停
-  protected val pausedState = object : State<Pause>("IdleState") {
+  protected val pausedState = object : State<Pause>("pausedState") {
     override fun onEnter(param: Pause) {
       super.onEnter(param)
     }
@@ -179,7 +180,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 停止
-  protected val stoppedState = object : State<Stop>("IdleState") {
+  protected val stoppedState = object : State<Stop>("stoppedState") {
     override fun onEnter(param: Stop) {
       super.onEnter(param)
     }
@@ -190,7 +191,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 完成
-  protected val completedState = object : State<Complete>("IdleState") {
+  protected val completedState = object : State<Complete>("completedState") {
     override fun onEnter(param: Complete) {
       super.onEnter(param)
     }
@@ -201,7 +202,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 出错
-  protected val errorState = object : State<Error>("IdleState") {
+  protected val errorState = object : State<Error>("errorState") {
     override fun onEnter(param: Error) {
       super.onEnter(param)
     }
@@ -212,7 +213,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   // 结束(release后)
-  protected val endState = object : State<End>("IdleState") {
+  protected val endState = object : State<End>("endState") {
     override fun onEnter(param: End) {
       super.onEnter(param)
     }
@@ -245,11 +246,11 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   }
 
   override fun prepareSync() {
-    sendEvent(PrepareSync())
+    sendEvent(Prepare(true))
   }
 
   override fun prepareAsync() {
-    sendEvent(PrepareAsync())
+    sendEvent(Prepare(false))
   }
 
   // 子类在异步prepare完成时调用
