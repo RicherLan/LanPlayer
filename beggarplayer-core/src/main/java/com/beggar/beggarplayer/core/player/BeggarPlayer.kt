@@ -1,8 +1,8 @@
 package com.beggar.beggarplayer.core.player
 
 import com.beggar.beggarplayer.core.player.config.BeggarPlayerConfig
-import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.datasource.BeggarPlayerDataSource
+import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerStateObsever
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
@@ -38,7 +38,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
   private var stateMachine: SyncStateMachine
 
   // 状态更改监听
-  private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
+  private var stateChangeListener: IBeggarPlayerStateObsever? = null
 
   init {
     playerLogic = buildPlayerLogic()
@@ -93,6 +93,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
       .state(completedState)
       .state(errorState)
       .state(endState)
+    // TODO: transition
 
     return builder.build()
   }
@@ -223,7 +224,7 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   // ********************* 状态 *********************
 
-  override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
+  override fun setStateListener(listener: IBeggarPlayerStateObsever?) {
     stateChangeListener = listener
   }
 

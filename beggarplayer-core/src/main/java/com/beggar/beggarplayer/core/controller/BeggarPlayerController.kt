@@ -2,7 +2,7 @@ package com.beggar.beggarplayer.core.controller
 
 import com.beggar.beggarplayer.core.controller.config.BeggarPlayerControllerConfig
 import com.beggar.beggarplayer.core.player.IBeggarPlayer
-import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerStateObsever
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
@@ -37,11 +37,11 @@ class BeggarPlayerController(
     }
   }
 
-  override fun registerStateChangeListener(listener: IBeggarPlayerStateChangeListener) {
+  override fun registerStateChangeListener(listener: IBeggarPlayerStateObsever) {
     playerStateChangeEventHub.registerListener(listener)
   }
 
-  override fun unregisterStateChangeListener(listener: IBeggarPlayerStateChangeListener) {
+  override fun unregisterStateChangeListener(listener: IBeggarPlayerStateObsever) {
     playerStateChangeEventHub.unregisterListener(listener)
   }
 

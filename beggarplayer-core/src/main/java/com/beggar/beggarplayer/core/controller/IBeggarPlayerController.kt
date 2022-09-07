@@ -1,6 +1,6 @@
 package com.beggar.beggarplayer.core.controller
 
-import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerStateObsever
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**
@@ -17,9 +17,9 @@ interface IBeggarPlayerController {
   /**
    * 注册状态更改监听
    */
-  fun registerStateChangeListener(listener: IBeggarPlayerStateChangeListener)
+  fun registerStateChangeListener(listener: IBeggarPlayerStateObsever)
 
-  fun unregisterStateChangeListener(listener: IBeggarPlayerStateChangeListener)
+  fun unregisterStateChangeListener(listener: IBeggarPlayerStateObsever)
 
   /**
    * 给播放器设置TextureView，由该TextureView产生的surface进行播放

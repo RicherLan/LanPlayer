@@ -1,7 +1,7 @@
 package com.beggar.beggarplayer.core.player
 
-import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.datasource.BeggarPlayerDataSource
+import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerStateObsever
 
 /**
  * author: BeggarLan
@@ -13,7 +13,7 @@ interface IBeggarPlayer {
   /**
    * 状态更改监听
    */
-  fun setStateListener(listener: IBeggarPlayerStateChangeListener?)
+  fun setStateListener(listener: IBeggarPlayerStateObsever?)
 
   // ********************* 生命周期相关 *********************
   /**

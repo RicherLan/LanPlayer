@@ -1,4 +1,4 @@
-package com.beggar.beggarplayer.core.player.data
+package com.beggar.beggarplayer.core.player.datasource
 
 import android.content.Context
 import android.net.Uri

@@ -1,7 +1,7 @@
 package com.beggar.beggarplayer.core.controller
 
 import com.beggar.beggarplayer.core.base.EventHub
-import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerStateObsever
 import com.beggar.beggarplayer.core.player.statemachine.PlayerState
 
 /**
@@ -10,7 +10,7 @@ import com.beggar.beggarplayer.core.player.statemachine.PlayerState
  * description: 播放器状态更改事件分发
  */
 class BeggarPlayerStateChangeEventHub
-  : EventHub<IBeggarPlayerStateChangeListener>(), IBeggarPlayerStateChangeListener {
+  : EventHub<IBeggarPlayerStateObsever>(), IBeggarPlayerStateObsever {
 
   override fun onChange(newState: PlayerState) {
     for (listener in listeners) {
