@@ -5,26 +5,24 @@ package com.beggar.player.common.collection
  * created on: 2022/9/7 11:37 上午
  * description: 允许在迭代的过程中add、remove元素
  * 思想是CopyOnWrite，但是仅仅在迭代的时候【写操作】才copy
+ * 核心实现：调用方获取迭代器的时候，返回的是当前list的iterator, 当进行增删操作时，list = list.copy，这样iterator是旧list的
  *
  * 非线程安全的list
  */
 class SafeIterableList<T> : MutableCollection<T> {
 
-  companion object {
-    private const val TAG = "SafeIterableList"
-  }
-
-  // 原数据
-  // arrayList
+  // 原数据, arrayList
   private var list = mutableListOf<T>()
 
   // copy
   private val modifiableList: MutableList<T>
     get() {
-      if (isNewIterator) {
+      // 不为0表示：有正在使用迭代器的 && list没有copy过
+      if (iteratorCount != 0) {
         list = list.toMutableList()
         version++
-        isNewIterator = false
+        // 做个flag
+        iteratorCount = 0
       }
 
       return list
@@ -37,24 +35,33 @@ class SafeIterableList<T> : MutableCollection<T> {
 
   /***
    * 使用了迭代器但是还没有进行list的copy 为true
-   * 创建迭代器的时候 设置为true
-   * 在list进行copy后会置false
+   * 创建迭代器的时候 +1
+   * 在list进行copy后 置为0
    */
-  private var isNewIterator = false
+  private var iteratorCount = 0
 
   override fun iterator(): MutableIterator<T> {
     return object : MutableIterator<T> {
+      /**
+       * 这里是核心，如果有增删的话，这里的iterator指向的还是之前的那个, 集合的快失败异常会在迭代器的next()方法中触发(不仅仅next())
+       */
       private val iterator = list.iterator()
+      private var myVersion = version
 
       init {
         // 使用迭代器的时候更新值
-        isNewIterator = true
+        iteratorCount++
       }
 
       override fun hasNext(): Boolean {
         val hasNext = iterator.hasNext()
         if (!hasNext) {
-
+          // 如果版本不一致了，说明在该iterator创建后，list被copy了(copy的时候会把iteratorCount reset)
+          if (version == myVersion && myVersion != -1) {
+            iteratorCount--
+            // 标记已经处理过
+            myVersion = -1
+          }
         }
         return hasNext
       }
@@ -64,7 +71,7 @@ class SafeIterableList<T> : MutableCollection<T> {
       }
 
       override fun remove() {
-        throw IllegalAccessError(TAG + "[iterator not support remove]")
+        throw UnsupportedOperationException("iterator not support remove")
       }
     }
   }
