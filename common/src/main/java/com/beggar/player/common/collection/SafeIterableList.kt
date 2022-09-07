@@ -10,30 +10,63 @@ package com.beggar.player.common.collection
  */
 class SafeIterableList<T> : MutableCollection<T> {
 
+  companion object {
+    private const val TAG = "SafeIterableList"
+  }
+
   // 原数据
   // arrayList
-  private val list = mutableListOf<T>()
+  private var list = mutableListOf<T>()
 
   // copy
   private val modifiableList: MutableList<T>
     get() {
+      if (isNewIterator) {
+        list = list.toMutableList()
+        version++
+        isNewIterator = false
+      }
 
+      return list
     }
 
   /**
    * list每copy一次版本就 +1
    */
-  private var verison = 0
+  private var version = 0
 
   /***
-   * 当前版本用了多少迭代器
-   * 使用迭代器的时候 +1
-   *
+   * 使用了迭代器但是还没有进行list的copy 为true
+   * 创建迭代器的时候 设置为true
+   * 在list进行copy后会置false
    */
-  private var iteratorCount = 0
+  private var isNewIterator = false
 
   override fun iterator(): MutableIterator<T> {
-    TODO("Not yet implemented")
+    return object : MutableIterator<T> {
+      private val iterator = list.iterator()
+
+      init {
+        // 使用迭代器的时候更新值
+        isNewIterator = true
+      }
+
+      override fun hasNext(): Boolean {
+        val hasNext = iterator.hasNext()
+        if (!hasNext) {
+
+        }
+        return hasNext
+      }
+
+      override fun next(): T {
+        return iterator.next()
+      }
+
+      override fun remove() {
+        throw IllegalAccessError(TAG + "[iterator not support remove]")
+      }
+    }
   }
 
   override val size: Int
