@@ -11,7 +11,8 @@ import com.beggar.statemachine.SyncStateMachine
  * created on: 2022/8/30 8:51 下午
  * description: 播放器基类
  * 1. 状态机构建和维护
- * 2.
+ * 2. 播放器方法实现(其实是子类实现) {@see PlayerLogic}
+ * 2. 提供播放器状态监听
  */
 abstract class BeggarBasePlayer : IBeggarPlayer {
 
@@ -19,14 +20,46 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
     private const val TAG = "BeggarBasePlayer"
   }
 
+  /**
+   * 具体的播放器子类实现
+   */
+  protected interface PlayerLogic : IBeggarPlayer
+
+
+  // 播放器具体逻辑
+  private var playerLogic: PlayerLogic
+
   // 状态机
-  private lateinit var stateMachine: SyncStateMachine
+  private var stateMachine: SyncStateMachine
 
   // 状态更改监听
   private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
 
   init {
-    buildStateMachine()
+    playerLogic = buildPlayerLogic()
+    stateMachine = buildStateMachine()
+  }
+
+  protected abstract fun buildPlayerLogic(): PlayerLogic
+
+  /**
+   * 构造状态机
+   */
+  private fun buildStateMachine(): SyncStateMachine {
+    val builder = SyncStateMachine.Builder()
+      .setInitialState(idleState)
+      .state(idleState)
+      .state(initializedState)
+      .state(preparingState)
+      .state(preparedState)
+      .state(startedState)
+      .state(pausedState)
+      .state(stoppedState)
+      .state(completedState)
+      .state(errorState)
+      .state(endState)
+
+    return builder.build()
   }
 
   // ********************* 状态机事件 *********************
@@ -155,27 +188,6 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
 
   // ********************* 状态 *********************
 
-
-  /**
-   * 构造状态机
-   */
-  private fun buildStateMachine() {
-    val builder = SyncStateMachine.Builder()
-      .setInitialState(idleState)
-      .state(idleState)
-      .state(initializedState)
-      .state(preparingState)
-      .state(preparedState)
-      .state(startedState)
-      .state(pausedState)
-      .state(stoppedState)
-      .state(completedState)
-      .state(errorState)
-      .state(endState)
-
-    stateMachine = builder.build()
-  }
-
   override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
     stateChangeListener = listener
   }
@@ -237,22 +249,28 @@ abstract class BeggarBasePlayer : IBeggarPlayer {
 
   // ********************* 生命周期相关 *********************
 
+  // ********************* 其他操作方法 *********************
+  override fun seekTo(timeMs: Long) {
+    playerLogic.seekTo(timeMs)
+  }
 
-  // ********************* 子类实现，驱动生命周期的相关方法 *********************
-  protected abstract fun setDataSourceInner(dataSource: BeggarPlayerDataSource)
+  override fun setVolume(volume: Float) {
+    playerLogic.setVolume(volume)
+  }
 
-  protected abstract fun prepareInner()
+  override fun setLoop(loop: Boolean) {
+    playerLogic.setLoop(loop)
+  }
+  // ********************* 其他操作方法 *********************
 
-  protected abstract fun prepareAsyncInner()
+  // ********************* 获得一些信息 *********************
+  override fun getVideoWidth(): Int {
+    return playerLogic.getVideoWidth()
+  }
 
-  protected abstract fun startInner()
+  override fun getVideoHeight(): Int {
+    return playerLogic.getVideoHeight()
+  }
+  // ********************* 获得一些信息 *********************
 
-  protected abstract fun pauseInner()
-
-  protected abstract fun stopInner()
-
-  protected abstract fun resetInner()
-
-  protected abstract fun releaseInner()
-  // ********************* 子类实现，生命驱动生命周期的相关方法 *********************
 }

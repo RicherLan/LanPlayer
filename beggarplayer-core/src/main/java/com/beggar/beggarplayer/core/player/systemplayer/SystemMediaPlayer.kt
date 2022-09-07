@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import com.beggar.beggarplayer.core.base.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.player.BeggarBasePlayer
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
+import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
 
 /**
  * author: BeggarLan
@@ -90,64 +91,65 @@ class SystemMediaPlayer : BeggarBasePlayer() {
     })
   }
 
-  // ********************* 驱动生命周期的方法 *********************
-  override fun setDataSourceInner(dataSource: BeggarPlayerDataSource) {
+  // 播放器的逻辑
+  override fun buildPlayerLogic(): PlayerLogic {
+    return object : PlayerLogic {
+      override fun setStateListener(listener: IBeggarPlayerStateChangeListener?) {
+        TODO("Not yet implemented")
+      }
 
+      override fun setDataSource(dataSource: BeggarPlayerDataSource) {
+        TODO("Not yet implemented")
+      }
+
+      override fun prepareSync() {
+        TODO("Not yet implemented")
+      }
+
+      override fun prepareAsync() {
+        TODO("Not yet implemented")
+      }
+
+      override fun start() {
+        TODO("Not yet implemented")
+      }
+
+      override fun pause() {
+        TODO("Not yet implemented")
+      }
+
+      override fun stop() {
+        TODO("Not yet implemented")
+      }
+
+      override fun reset() {
+        TODO("Not yet implemented")
+      }
+
+      override fun release() {
+        TODO("Not yet implemented")
+      }
+
+      override fun seekTo(timeMs: Long) {
+        TODO("Not yet implemented")
+      }
+
+      override fun setVolume(volume: Float) {
+        TODO("Not yet implemented")
+      }
+
+      override fun setLoop(loop: Boolean) {
+        TODO("Not yet implemented")
+      }
+
+      override fun getVideoWidth(): Int {
+        TODO("Not yet implemented")
+      }
+
+      override fun getVideoHeight(): Int {
+        TODO("Not yet implemented")
+      }
+    }
   }
-
-  override fun prepareInner() {
-
-  }
-
-  override fun prepareAsyncInner() {
-
-  }
-
-  override fun startInner() {
-
-  }
-
-  override fun pauseInner() {
-
-  }
-
-  override fun stopInner() {
-
-  }
-
-  override fun resetInner() {
-
-  }
-
-  override fun releaseInner() {
-
-  }
-  // ********************* 驱动生命周期的方法 *********************
-
-
-  // ********************* 其他操作方法 *********************
-  override fun seekTo(timeMs: Long) {
-
-  }
-
-  override fun setVolume(volume: Float) {
-
-  }
-
-  override fun setLoop(loop: Boolean) {
-
-  }
-  // ********************* 其他操作方法 *********************
-
-
-  // ********************* 获得一些信息 *********************
-  override fun getVideoWidth(): Int {
-    return mediaPlayer.videoWidth
-  }
-
-  override fun getVideoHeight(): Int {
-    return mediaPlayer.videoHeight
-  }
-  // ********************* 获得一些信息 *********************
 
 }
