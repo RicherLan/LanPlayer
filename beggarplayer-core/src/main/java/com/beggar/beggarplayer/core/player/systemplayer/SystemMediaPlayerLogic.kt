@@ -13,7 +13,7 @@ import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeList
  * created on: 2022/8/30 8:33 下午
  * description: 采用系统播放器实现
  */
-class SystemMediaPlayer : IBeggarPlayerLogic {
+class SystemMediaPlayerLogic : IBeggarPlayerLogic {
 
   companion object {
     private const val TAG = "SystemMediaPlayer"

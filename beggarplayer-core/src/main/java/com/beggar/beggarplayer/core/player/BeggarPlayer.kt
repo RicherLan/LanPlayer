@@ -1,7 +1,9 @@
 package com.beggar.beggarplayer.core.player
 
+import com.beggar.beggarplayer.core.player.config.BeggarPlayerConfig
 import com.beggar.beggarplayer.core.player.data.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
+import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
@@ -11,10 +13,14 @@ import com.beggar.statemachine.SyncStateMachine
  * created on: 2022/8/30 8:51 下午
  * description: 播放器基类
  * 1. 状态机构建和维护
- * 2. 播放器方法实现(其实是子类实现) {@see PlayerLogic}
+ * 2. 播放器具体逻辑允许外部替换，否则使用默认logic:
+ * @see IBeggarPlayerLogic
+ *
  * 2. 提供播放器状态监听
+ *
+ * @param config 配置
  */
-class BeggarPlayer : IBeggarPlayer {
+class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   /**
    * 具体的播放器子类实现
@@ -35,8 +41,16 @@ class BeggarPlayer : IBeggarPlayer {
   private var stateChangeListener: IBeggarPlayerStateChangeListener? = null
 
   init {
-//    playerLogic = buildPlayerLogic()
+    playerLogic = buildPlayerLogic()
     stateMachine = buildStateMachine()
+  }
+
+  /**
+   * 构造logic，允许外部替换logic
+   * 默认采用系统播放器实现
+   */
+  private fun buildPlayerLogic(): IBeggarPlayerLogic {
+    return config.playerLogic ?: SystemMediaPlayerLogic()
   }
 
   /**

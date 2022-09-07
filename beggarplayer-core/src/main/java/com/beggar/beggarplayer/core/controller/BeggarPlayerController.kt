@@ -3,7 +3,7 @@ package com.beggar.beggarplayer.core.controller
 import com.beggar.beggarplayer.core.controller.config.BeggarPlayerControllerConfig
 import com.beggar.beggarplayer.core.player.IBeggarPlayer
 import com.beggar.beggarplayer.core.player.listener.IBeggarPlayerStateChangeListener
-import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayer
+import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**
@@ -89,7 +89,7 @@ class BeggarPlayerController(
    * 创建系统播放器
    */
   private fun createSystemMediaPlayer(): IBeggarPlayer {
-    return SystemMediaPlayer()
+    return SystemMediaPlayerLogic()
   }
 
 }
