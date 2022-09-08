@@ -95,7 +95,7 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
   }
 
   override fun release() {
-    coreManager.sendEvent(PlayerEvent.End())
+    coreManager.sendEvent(PlayerEvent.Release())
   }
 
   // ********************* 生命周期相关 *********************

@@ -80,13 +80,14 @@ class BeggarPlayerCoreManager(
     class Reset : Event // 进idle
     class SetDataSource(val dataSource: BeggarPlayerDataSource) : Event // 设置数据源
     class Prepare(val isSync: Boolean) : Event // 区分同步和异步
-    class Prepared : Event // prepare完成
+    class Prepared : Event // prepare完成(异步prepare在完成的时候发送该事件)
     class Start : Event // 开始播放
     class Pause : Event // 暂停播放
     class Stop : Event // 停止播放
+    class SeekTo(timeMs: Long) : Event // 跳转
     class Complete : Event // 播放完毕
     class Error : Event // 出错
-    class End : Event // 这里就结束播放器的生命了
+    class Release : Event // 释放，这里就结束播放器的生命了
   }
   // ********************* 状态机事件 *********************
 
@@ -213,8 +214,8 @@ class BeggarPlayerCoreManager(
   }
 
   // 结束(release后)
-  protected val endState = object : State<End>("endState") {
-    override fun onEnter(param: End) {
+  protected val endState = object : State<Release>("endState") {
+    override fun onEnter(param: Release) {
       super.onEnter(param)
       playerLogic.release()
       observerDispatcher.onEnterEnd()
