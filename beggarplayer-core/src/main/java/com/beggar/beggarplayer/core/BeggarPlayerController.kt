@@ -3,7 +3,7 @@ package com.beggar.beggarplayer.core
 import com.beggar.beggarplayer.core.config.BeggarPlayerConfig
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.observer.BeggarPlayerObserverDispatcher
-import com.beggar.beggarplayer.core.observer.IBeggarPlayerObserver
+import com.beggar.beggarplayer.core.statemachine.IBeggarPlayerStateMachineObserver
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
 import com.beggar.beggarplayer.core.statemachine.BeggarPlayerStateMachineManager
@@ -43,7 +43,7 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
 
   init {
     playerLogic = buildPlayerLogic()
-    stateMachineManager = BeggarPlayerStateMachineManager()
+    stateMachineManager = buildStateMachineManager()
   }
 
   /**
@@ -55,38 +55,6 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
     }
     textureView = view
     // TODO: view更换时其他逻辑处理
-  }
-
-  /**
-   * 构造logic，允许外部替换logic
-   * 默认采用系统播放器实现
-   */
-  private fun buildPlayerLogic(): IBeggarPlayerLogic {
-    // 监听播放器的事件
-    val callback = object : IBeggarPlayerLogic.IPlayerCallback {
-      override fun onPrepared() {
-        sendEvent(PlayerEvent.Prepared())
-      }
-
-      override fun onCompletion() {
-        sendEvent(PlayerEvent.Complete())
-      }
-
-      override fun onError() {
-        sendEvent(PlayerEvent.Error())
-      }
-    }
-
-    // 替换为外面的实现
-    if (config.playerLogic != null) {
-      config.playerLogic.setPlayerCallback(callback)
-      return config.playerLogic
-    }
-
-    // 默认实现
-    val systemMediaPlayerLogic = SystemMediaPlayerLogic()
-    systemMediaPlayerLogic.setPlayerCallback(callback)
-    return systemMediaPlayerLogic
   }
 
   override fun registerObserver(observer: IBeggarPlayerObserver) {
@@ -166,5 +134,103 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
     return playerLogic.getVideoHeight()
   }
   // ********************* 获得一些信息 *********************
+
+  /**
+   * 构造logic，允许外部替换logic
+   * 默认采用系统播放器实现
+   */
+  private fun buildPlayerLogic(): IBeggarPlayerLogic {
+    // 监听播放器的事件
+    val callback = object : IBeggarPlayerLogic.IPlayerCallback {
+      override fun onPrepared() {
+        sendEvent(PlayerEvent.Prepared())
+      }
+
+      override fun onCompletion() {
+        sendEvent(PlayerEvent.Complete())
+      }
+
+      override fun onError() {
+        sendEvent(PlayerEvent.Error())
+      }
+    }
+
+    // 替换为外面的实现
+    if (config.playerLogic != null) {
+      config.playerLogic.setPlayerCallback(callback)
+      return config.playerLogic
+    }
+
+    // 默认实现
+    val systemMediaPlayerLogic = SystemMediaPlayerLogic()
+    systemMediaPlayerLogic.setPlayerCallback(callback)
+    return systemMediaPlayerLogic
+  }
+
+  /**
+   * 构造状态机管理器
+   * 监听状态变化 --> 逻辑处理
+   */
+  private fun buildStateMachineManager(): BeggarPlayerStateMachineManager {
+    val stateObserver = object : IBeggarPlayerStateMachineObserver {
+      override fun onEnterIdle() {
+        playerLogic.setDataSource(param.dataSource)
+        observerDispatcher.onEnterIdle()
+      }
+
+      override fun onEnterInitialized() {
+        observerDispatcher.onEnterInitialized()
+      }
+
+      override fun onEnterPreparing() {
+        // 同步prepare完毕，直接发送prepare完成事件
+        if (param.isSync) {
+          playerLogic.prepareSync()
+          sendEvent(Prepared())
+        } else {
+          /**
+           * 异步prepare完成是在播放器的回调中
+           * @see IBeggarPlayerLogic.IPlayerCallback.onPrepared
+           */
+          playerLogic.prepareAsync()
+        }
+        observerDispatcher.onEnterPreparing()
+      }
+
+      override fun onEnterPrepared() {
+        observerDispatcher.onEnterPrepared()
+      }
+
+      override fun onEnterStarted() {
+        playerLogic.start()
+        observerDispatcher.onEnterStarted()
+      }
+
+      override fun onEnterPaused() {
+        playerLogic.pause()
+        observerDispatcher.onEnterPaused()
+      }
+
+      override fun onEnterStopped() {
+        playerLogic.stop()
+        observerDispatcher.onEnterStopped()
+      }
+
+      override fun onEnterCompleted() {
+        observerDispatcher.onEnterCompleted()
+      }
+
+      override fun onEnterError() {
+        observerDispatcher.onEnterError()
+      }
+
+      override fun onEnterEnd() {
+        playerLogic.release()
+        observerDispatcher.onEnterEnd()
+      }
+    }
+    val stateMachineManager = BeggarPlayerStateMachineManager()
+    return stateMachineManager
+  }
 
 }

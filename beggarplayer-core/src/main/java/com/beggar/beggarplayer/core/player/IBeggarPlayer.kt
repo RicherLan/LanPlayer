@@ -1,7 +1,6 @@
 package com.beggar.beggarplayer.core.player
 
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.observer.IBeggarPlayerObserver
 
 /**
  * author: BeggarLan

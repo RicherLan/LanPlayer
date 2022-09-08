@@ -1,8 +1,7 @@
 package com.beggar.beggarplayer.core.statemachine
 
-import com.beggar.beggarplayer.core.BeggarPlayerState
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
+import com.beggar.beggarplayer.core.statemachine.BeggarPlayerStateMachineManager.PlayerEvent.*
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
@@ -16,6 +15,8 @@ class BeggarPlayerStateMachineManager {
 
   // 状态机
   private var stateMachine: SyncStateMachine
+
+  private var stateObserver: IBeggarPlayerStateMachineObserver? = null
 
   init {
     stateMachine = buildStateMachine()
@@ -41,6 +42,11 @@ class BeggarPlayerStateMachineManager {
     // TODO: transition
 
     return builder.build()
+  }
+
+  // 设置监听
+  fun setStateObserver(observer: IBeggarPlayerStateMachineObserver?) {
+    stateObserver = observer
   }
 
   /**
@@ -69,7 +75,7 @@ class BeggarPlayerStateMachineManager {
   protected val idleState = object : State<Any>("IdleState") {
     override fun onEnter(param: Any) {
       super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.IdleState)
+      stateObserver?.onEnterIdle()
     }
 
     override fun onExit() {
@@ -81,8 +87,7 @@ class BeggarPlayerStateMachineManager {
   protected val initializedState = object : State<SetDataSource>("initializedState") {
     override fun onEnter(param: SetDataSource) {
       super.onEnter(param)
-      playerLogic.setDataSource(param.dataSource)
-      observerDispatcher.onStateChange(BeggarPlayerState.InitializedState)
+      stateObserver?.onEnterInitialized()
     }
 
     override fun onExit() {
@@ -94,19 +99,7 @@ class BeggarPlayerStateMachineManager {
   protected val preparingState = object : State<Prepare>("preparingState") {
     override fun onEnter(param: Prepare) {
       super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.PreparingState)
-
-      // 同步prepare完毕，直接发送prepare完成事件
-      if (param.isSync) {
-        playerLogic.prepareSync()
-        sendEvent(Prepared())
-      } else {
-        /**
-         * 异步prepare完成是在播放器的回调中
-         * @see IBeggarPlayerLogic.IPlayerCallback.onPrepared
-         */
-        playerLogic.prepareAsync()
-      }
+      stateObserver?.onEnterPreparing()
     }
 
     override fun onExit() {
@@ -118,7 +111,7 @@ class BeggarPlayerStateMachineManager {
   protected val preparedState = object : State<Prepared>("preparedState") {
     override fun onEnter(param: Prepared) {
       super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.PreparedState)
+      stateObserver?.onEnterPrepared()
     }
 
     override fun onExit() {
@@ -130,8 +123,7 @@ class BeggarPlayerStateMachineManager {
   protected val startedState = object : State<Start>("startedState") {
     override fun onEnter(param: Start) {
       super.onEnter(param)
-      playerLogic.start()
-      observerDispatcher.onStateChange(BeggarPlayerState.StartedState)
+      stateObserver?.onEnterStarted()
     }
 
     override fun onExit() {
@@ -143,8 +135,7 @@ class BeggarPlayerStateMachineManager {
   protected val pausedState = object : State<Pause>("pausedState") {
     override fun onEnter(param: Pause) {
       super.onEnter(param)
-      playerLogic.pause()
-      observerDispatcher.onStateChange(BeggarPlayerState.PausedState)
+      stateObserver?.onEnterPaused()
     }
 
     override fun onExit() {
@@ -156,8 +147,7 @@ class BeggarPlayerStateMachineManager {
   protected val stoppedState = object : State<Stop>("stoppedState") {
     override fun onEnter(param: Stop) {
       super.onEnter(param)
-      playerLogic.stop()
-      observerDispatcher.onStateChange(BeggarPlayerState.StoppedState)
+      stateObserver?.onEnterStopped()
     }
 
     override fun onExit() {
@@ -169,7 +159,7 @@ class BeggarPlayerStateMachineManager {
   protected val completedState = object : State<Complete>("completedState") {
     override fun onEnter(param: Complete) {
       super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.CompletedState)
+      stateObserver?.onEnterCompleted()
     }
 
     override fun onExit() {
@@ -181,7 +171,7 @@ class BeggarPlayerStateMachineManager {
   protected val errorState = object : State<Error>("errorState") {
     override fun onEnter(param: Error) {
       super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.ErrorState)
+      stateObserver?.onEnterError()
     }
 
     override fun onExit() {
@@ -193,8 +183,7 @@ class BeggarPlayerStateMachineManager {
   protected val endState = object : State<End>("endState") {
     override fun onEnter(param: End) {
       super.onEnter(param)
-      playerLogic.release()
-      observerDispatcher.onStateChange(BeggarPlayerState.EndState)
+      stateObserver?.onEnterEnd()
     }
 
     override fun onExit() {

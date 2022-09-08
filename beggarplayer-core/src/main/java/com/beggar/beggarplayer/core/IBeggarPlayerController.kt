@@ -1,6 +1,5 @@
 package com.beggar.beggarplayer.core
 
-import com.beggar.beggarplayer.core.observer.IBeggarPlayerObserver
 import com.beggar.beggarplayer.core.player.IBeggarPlayer
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
