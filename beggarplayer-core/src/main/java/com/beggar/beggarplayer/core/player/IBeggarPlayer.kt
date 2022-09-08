@@ -1,7 +1,7 @@
 package com.beggar.beggarplayer.core.player
 
-import com.beggar.beggarplayer.core.player.datasource.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerObserver
+import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
+import com.beggar.beggarplayer.core.observer.IBeggarPlayerObserver
 
 /**
  * author: BeggarLan
@@ -9,13 +9,6 @@ import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerObserver
  * description: 播放器接口
  */
 interface IBeggarPlayer {
-
-  /**
-   * 监听播放器
-   */
-  fun registerObserver(observer: IBeggarPlayerObserver)
-
-  fun unregisterObserver(observer: IBeggarPlayerObserver)
 
   // ********************* 生命周期相关 *********************
   /**

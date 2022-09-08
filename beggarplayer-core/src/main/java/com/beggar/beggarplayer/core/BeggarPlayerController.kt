@@ -1,10 +1,12 @@
-package com.beggar.beggarplayer.core.player
+package com.beggar.beggarplayer.core
 
-import com.beggar.beggarplayer.core.player.config.BeggarPlayerConfig
-import com.beggar.beggarplayer.core.player.datasource.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.player.observer.BeggarPlayerObserverDispatcher
-import com.beggar.beggarplayer.core.player.observer.IBeggarPlayerObserver
+import com.beggar.beggarplayer.core.config.BeggarPlayerConfig
+import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
+import com.beggar.beggarplayer.core.observer.BeggarPlayerObserverDispatcher
+import com.beggar.beggarplayer.core.observer.IBeggarPlayerObserver
+import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
+import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
@@ -12,21 +14,16 @@ import com.beggar.statemachine.SyncStateMachine
 /**
  * author: BeggarLan
  * created on: 2022/8/30 8:51 下午
- * description: 播放器基类
+ * description: 播放器controller
  * 1. 状态机构建和维护
  * 2. 播放器具体逻辑允许外部替换，否则使用默认logic:
  * @see IBeggarPlayerLogic
  *
- * 2. 提供播放器状态监听
+ * 3. 提供播放器状态监听
  *
  * @param config 配置
  */
-class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
-
-  /**
-   * 具体的播放器子类实现
-   */
-  protected interface IPlayerLogic : IBeggarPlayer
+class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPlayerController {
 
   companion object {
     private const val TAG = "BeggarBasePlayer"
@@ -34,6 +31,9 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   // 播放器具体逻辑
   private val playerLogic: IBeggarPlayerLogic
+
+  // UI
+  private lateinit var textureView: BeggarPlayerTextureView
 
   // 状态机
   private var stateMachine: SyncStateMachine
@@ -248,7 +248,6 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
       super.onExit()
     }
   }
-
   // ********************* 状态 *********************
 
   override fun registerObserver(observer: IBeggarPlayerObserver) {
@@ -257,6 +256,14 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   override fun unregisterObserver(observer: IBeggarPlayerObserver) {
     observerDispatcher.unregisterObserver(observer)
+  }
+
+  override fun setTextureView(view: BeggarPlayerTextureView) {
+    if (textureView == view) {
+      return
+    }
+    textureView = view
+    // TODO: view更换时其他逻辑处理
   }
 
   /**
@@ -317,6 +324,10 @@ class BeggarPlayer(private val config: BeggarPlayerConfig) : IBeggarPlayer {
 
   override fun setLoop(loop: Boolean) {
     playerLogic.setLoop(loop)
+  }
+
+  override fun setMuteStatus(isMute: Boolean) {
+    TODO("Not yet implemented")
   }
   // ********************* 其他操作方法 *********************
 

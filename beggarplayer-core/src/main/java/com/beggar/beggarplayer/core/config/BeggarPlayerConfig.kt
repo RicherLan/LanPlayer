@@ -1,4 +1,4 @@
-package com.beggar.beggarplayer.core.player.config
+package com.beggar.beggarplayer.core.config
 
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 

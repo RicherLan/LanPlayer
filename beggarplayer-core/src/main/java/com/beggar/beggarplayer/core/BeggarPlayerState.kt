@@ -1,4 +1,4 @@
-package com.beggar.beggarplayer.core.player
+package com.beggar.beggarplayer.core
 
 /**
  * author: BeggarLan

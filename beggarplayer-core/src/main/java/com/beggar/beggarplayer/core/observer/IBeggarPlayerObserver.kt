@@ -1,6 +1,6 @@
-package com.beggar.beggarplayer.core.player.observer
+package com.beggar.beggarplayer.core.observer
 
-import com.beggar.beggarplayer.core.player.BeggarPlayerState
+import com.beggar.beggarplayer.core.BeggarPlayerState
 
 /**
  * author: BeggarLan

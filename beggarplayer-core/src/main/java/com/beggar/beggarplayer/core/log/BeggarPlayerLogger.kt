@@ -1,4 +1,4 @@
-package com.beggar.beggarplayer.core.base
+package com.beggar.beggarplayer.core.log
 
 import android.util.Log
 
