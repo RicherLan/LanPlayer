@@ -6,10 +6,10 @@ import com.beggar.beggarplayer.core.observer.BeggarPlayerObserverDispatcher
 import com.beggar.beggarplayer.core.observer.IBeggarPlayerObserver
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
+import com.beggar.beggarplayer.core.statemachine.BeggarPlayerStateMachineManager
+import com.beggar.beggarplayer.core.statemachine.BeggarPlayerStateMachineManager.PlayerEvent
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 import com.beggar.statemachine.Event
-import com.beggar.statemachine.State
-import com.beggar.statemachine.SyncStateMachine
 
 /**
  * author: BeggarLan
@@ -36,14 +36,14 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
   private lateinit var textureView: BeggarPlayerTextureView
 
   // 状态机
-  private var stateMachine: SyncStateMachine
+  private val stateMachineManager: BeggarPlayerStateMachineManager
 
   // 播放器事件分发
   private val observerDispatcher = BeggarPlayerObserverDispatcher()
 
   init {
     playerLogic = buildPlayerLogic()
-    stateMachine = buildStateMachine()
+    stateMachineManager = BeggarPlayerStateMachineManager()
   }
 
   /**
@@ -65,15 +65,15 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
     // 监听播放器的事件
     val callback = object : IBeggarPlayerLogic.IPlayerCallback {
       override fun onPrepared() {
-        sendEvent(Prepared())
+        sendEvent(PlayerEvent.Prepared())
       }
 
       override fun onCompletion() {
-        sendEvent(Complete())
+        sendEvent(PlayerEvent.Complete())
       }
 
       override fun onError() {
-        sendEvent(Error())
+        sendEvent(PlayerEvent.Error())
       }
     }
 
@@ -89,178 +89,6 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
     return systemMediaPlayerLogic
   }
 
-  /**
-   * 构造状态机
-   */
-  private fun buildStateMachine(): SyncStateMachine {
-    val builder = SyncStateMachine.Builder()
-      .setInitialState(idleState)
-      .state(idleState)
-      .state(initializedState)
-      .state(preparingState)
-      .state(preparedState)
-      .state(startedState)
-      .state(pausedState)
-      .state(stoppedState)
-      .state(completedState)
-      .state(errorState)
-      .state(endState)
-    // TODO: transition
-
-    return builder.build()
-  }
-
-  // ********************* 状态机事件 *********************
-  class Reset : Event // 进idle
-  class SetDataSource(val dataSource: BeggarPlayerDataSource) : Event // 设置数据源
-  class Prepare(val isSync: Boolean) : Event // 区分同步和异步
-  class Prepared : Event // prepare完成
-  class Start : Event // 开始播放
-  class Pause : Event // 暂停播放
-  class Stop : Event // 停止播放
-  class Complete : Event // 播放完毕
-  class Error : Event // 出错
-  class End : Event // 这里就结束播放器的生命了
-  // ********************* 状态机事件 *********************
-
-  // ********************* 状态 *********************
-  protected val idleState = object : State<Any>("IdleState") {
-    override fun onEnter(param: Any) {
-      super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.IdleState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 设置完数据源后
-  protected val initializedState = object : State<SetDataSource>("initializedState") {
-    override fun onEnter(param: SetDataSource) {
-      super.onEnter(param)
-      playerLogic.setDataSource(param.dataSource)
-      observerDispatcher.onStateChange(BeggarPlayerState.InitializedState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 准备中
-  protected val preparingState = object : State<Prepare>("preparingState") {
-    override fun onEnter(param: Prepare) {
-      super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.PreparingState)
-
-      // 同步prepare完毕，直接发送prepare完成事件
-      if (param.isSync) {
-        playerLogic.prepareSync()
-        sendEvent(Prepared())
-      } else {
-        /**
-         * 异步prepare完成是在播放器的回调中
-         * @see IBeggarPlayerLogic.IPlayerCallback.onPrepared
-         */
-        playerLogic.prepareAsync()
-      }
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 准备完成
-  protected val preparedState = object : State<Prepared>("preparedState") {
-    override fun onEnter(param: Prepared) {
-      super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.PreparedState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 开始播放
-  protected val startedState = object : State<Start>("startedState") {
-    override fun onEnter(param: Start) {
-      super.onEnter(param)
-      playerLogic.start()
-      observerDispatcher.onStateChange(BeggarPlayerState.StartedState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 暂停
-  protected val pausedState = object : State<Pause>("pausedState") {
-    override fun onEnter(param: Pause) {
-      super.onEnter(param)
-      playerLogic.pause()
-      observerDispatcher.onStateChange(BeggarPlayerState.PausedState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 停止
-  protected val stoppedState = object : State<Stop>("stoppedState") {
-    override fun onEnter(param: Stop) {
-      super.onEnter(param)
-      playerLogic.stop()
-      observerDispatcher.onStateChange(BeggarPlayerState.StoppedState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 完成
-  protected val completedState = object : State<Complete>("completedState") {
-    override fun onEnter(param: Complete) {
-      super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.CompletedState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 出错
-  protected val errorState = object : State<Error>("errorState") {
-    override fun onEnter(param: Error) {
-      super.onEnter(param)
-      observerDispatcher.onStateChange(BeggarPlayerState.ErrorState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-
-  // 结束(release后)
-  protected val endState = object : State<End>("endState") {
-    override fun onEnter(param: End) {
-      super.onEnter(param)
-      playerLogic.release()
-      observerDispatcher.onStateChange(BeggarPlayerState.EndState)
-    }
-
-    override fun onExit() {
-      super.onExit()
-    }
-  }
-  // ********************* 状态 *********************
-
   override fun registerObserver(observer: IBeggarPlayerObserver) {
     observerDispatcher.registerObserver(observer)
   }
@@ -273,40 +101,40 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
    * 向状态机发送事件
    */
   private fun sendEvent(event: Event) {
-    stateMachine.sendEvent(event)
+    stateMachineManager.sendEvent(event)
   }
 
   // ********************* 生命周期相关 *********************
   override fun reset() {
-    sendEvent(Reset())
+    stateMachineManager.sendEvent(PlayerEvent.Reset())
   }
 
   override fun setDataSource(dataSource: BeggarPlayerDataSource) {
-    sendEvent(SetDataSource(dataSource))
+    stateMachineManager.sendEvent(PlayerEvent.SetDataSource(dataSource))
   }
 
   override fun prepareSync() {
-    sendEvent(Prepare(true))
+    stateMachineManager.sendEvent(PlayerEvent.Prepare(true))
   }
 
   override fun prepareAsync() {
-    sendEvent(Prepare(false))
+    stateMachineManager.sendEvent(PlayerEvent.Prepare(false))
   }
 
   override fun start() {
-    sendEvent(Start())
+    stateMachineManager.sendEvent(PlayerEvent.Start())
   }
 
   override fun pause() {
-    sendEvent(Pause())
+    stateMachineManager.sendEvent(PlayerEvent.Pause())
   }
 
   override fun stop() {
-    sendEvent(Stop())
+    stateMachineManager.sendEvent(PlayerEvent.Stop())
   }
 
   override fun release() {
-    sendEvent(End())
+    stateMachineManager.sendEvent(PlayerEvent.End())
   }
 
   // ********************* 生命周期相关 *********************
