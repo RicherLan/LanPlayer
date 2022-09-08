@@ -18,9 +18,9 @@ import com.beggar.statemachine.root.RootSyncStateMachine
  * @param initialState  初始状态
  */
 abstract class SyncStateMachine(
-  private val states: List<StateNode>,
-  private val transitions: Map<State<*>, List<Transition>>,
-  protected val initialState: StateNode
+  internal val states: List<StateNode>,
+  internal val transitions: Map<State<*>, List<Transition>>,
+  internal val initialState: StateNode
 ) {
 
   companion object {
