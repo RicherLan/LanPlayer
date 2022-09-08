@@ -127,11 +127,11 @@ class BeggarPlayerCoreManager(
     return builder.build()
   }
 
-  fun registerObserver(observer: IBeggarPlayerStateObserver) {
+  internal fun registerObserver(observer: IBeggarPlayerStateObserver) {
     observerDispatcher.registerObserver(observer)
   }
 
-  fun unregisterObserver(observer: IBeggarPlayerStateObserver) {
+  internal fun unregisterObserver(observer: IBeggarPlayerStateObserver) {
     observerDispatcher.unregisterObserver(observer)
   }
 
@@ -160,7 +160,7 @@ class BeggarPlayerCoreManager(
   // ********************* 状态机事件 *********************
 
   // ********************* 状态 *********************
-  protected val idleState = object : State<Any>("IdleState") {
+  private val idleState = object : State<Any>("IdleState") {
     override fun onEnter(param: Any) {
       super.onEnter(param)
       observerDispatcher.onEnterIdle()
@@ -172,7 +172,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 设置完数据源后
-  protected val initializedState = object : State<SetDataSource>("initializedState") {
+  private val initializedState = object : State<SetDataSource>("initializedState") {
     override fun onEnter(param: SetDataSource) {
       super.onEnter(param)
       observerDispatcher.onEnterInitialized()
@@ -184,7 +184,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 准备中
-  protected val preparingState = object : State<Prepare>("preparingState") {
+  private val preparingState = object : State<Prepare>("preparingState") {
     override fun onEnter(param: Prepare) {
       super.onEnter(param)
       // 同步prepare完毕，直接发送prepare完成事件
@@ -207,7 +207,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 准备完成
-  protected val preparedState = object : State<Prepared>("preparedState") {
+  private val preparedState = object : State<Prepared>("preparedState") {
     override fun onEnter(param: Prepared) {
       super.onEnter(param)
       observerDispatcher.onEnterPrepared()
@@ -219,7 +219,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 开始播放
-  protected val startedState = object : State<Start>("startedState") {
+  private val startedState = object : State<Start>("startedState") {
     override fun onEnter(param: Start) {
       super.onEnter(param)
       playerLogic.start()
@@ -232,7 +232,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 暂停
-  protected val pausedState = object : State<Pause>("pausedState") {
+  private val pausedState = object : State<Pause>("pausedState") {
     override fun onEnter(param: Pause) {
       super.onEnter(param)
       playerLogic.pause()
@@ -245,7 +245,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 停止
-  protected val stoppedState = object : State<Stop>("stoppedState") {
+  private val stoppedState = object : State<Stop>("stoppedState") {
     override fun onEnter(param: Stop) {
       super.onEnter(param)
       playerLogic.stop()
@@ -258,7 +258,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 完成
-  protected val completedState = object : State<Complete>("completedState") {
+  private val completedState = object : State<Complete>("completedState") {
     override fun onEnter(param: Complete) {
       super.onEnter(param)
       observerDispatcher.onEnterCompleted()
@@ -270,7 +270,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 出错
-  protected val errorState = object : State<Error>("errorState") {
+  private val errorState = object : State<Error>("errorState") {
     override fun onEnter(param: Error) {
       super.onEnter(param)
       observerDispatcher.onEnterError()
@@ -282,7 +282,7 @@ class BeggarPlayerCoreManager(
   }
 
   // 结束(release后)
-  protected val endState = object : State<Release>("endState") {
+  private val endState = object : State<Release>("endState") {
     override fun onEnter(param: Release) {
       super.onEnter(param)
       playerLogic.release()
