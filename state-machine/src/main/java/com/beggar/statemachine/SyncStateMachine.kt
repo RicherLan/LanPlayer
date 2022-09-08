@@ -212,14 +212,14 @@ abstract class SyncStateMachine(
     }
 
     // 添加一组转换
-    fun transition(name: String, from: Set<State<Any>>, to: State<Any>, eventType: Class<*>) = apply {
+    fun transition(name: String, from: Set<State<*>>, to: State<*>, eventType: Class<*>) = apply {
       from.forEach {
         transition(name, it, to, eventType)
       }
     }
 
     // 添加转换
-    fun transition(name: String, from: State<Any>, to: State<Any>, eventType: Class<*>) = apply {
+    fun transition(name: String, from: State<*>, to: State<*>, eventType: Class<*>) = apply {
       transitions.getOrPut(from) { mutableListOf() }
         .add(Transition(name, from, to, eventType))
     }

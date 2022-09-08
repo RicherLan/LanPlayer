@@ -54,8 +54,75 @@ class BeggarPlayerCoreManager(
       .state(completedState)
       .state(errorState)
       .state(endState)
-      .transition()
-    // TODO: transition
+      .transition(  // 除End状态外，任何状态  --reset--> idleState
+        "reset",
+        setOf(
+          initializedState, preparingState, preparedState, startedState,
+          pausedState, stoppedState, completedState, errorState
+        ),
+        idleState,
+        Reset::class.java
+      )
+      .transition(  // 任何状态  --Release--> endState
+        "release",
+        setOf(
+          idleState, initializedState, preparingState, preparedState, startedState,
+          pausedState, stoppedState, completedState, errorState
+        ),
+        endState,
+        Release::class.java
+      )
+      .transition(  // 除End状态外, 任何状态  --error--> errorState
+        "release",
+        setOf(
+          idleState, initializedState, preparingState, preparedState, startedState,
+          pausedState, stoppedState, completedState
+        ),
+        errorState,
+        Error::class.java
+      )
+      .transition(  // 设置数据源后 --> initializedState
+        "setDataSource",
+        idleState,
+        initializedState,
+        SetDataSource::class.java
+      )
+      .transition(  // 异步准备 --> preparingState
+        "PrepareAsync",
+        setOf(initializedState, stoppedState),
+        preparingState,
+        PrepareAsync::class.java
+      )
+      .transition(  // 准备完成 --> preparedState
+        "Prepared",
+        setOf(initializedState, preparingState, stoppedState),
+        preparedState,
+        Prepared::class.java
+      )
+      .transition(  // 开始播放 --> startedState
+        "Start",
+        setOf(preparedState, pausedState, completedState),
+        startedState,
+        Start::class.java
+      )
+      .transition(  // 暂停播放 --> pausedState
+        "Pause",
+        setOf(startedState),
+        pausedState,
+        Pause::class.java
+      )
+      .transition(  // 停止播放 --> stoppedState
+        "Stop",
+        setOf(preparedState, startedState, pausedState, completedState),
+        stoppedState,
+        Stop::class.java
+      )
+      .transition(  // 完成播放 --> completedState
+        "Complete",
+        setOf(startedState),
+        completedState,
+        Complete::class.java
+      )
 
     return builder.build()
   }
@@ -79,7 +146,8 @@ class BeggarPlayerCoreManager(
   class PlayerEvent {
     class Reset : Event // 进idle
     class SetDataSource(val dataSource: BeggarPlayerDataSource) : Event // 设置数据源
-    class Prepare(val isSync: Boolean) : Event // 区分同步和异步
+    class PrepareAsync : Event // 异步
+    class PrepareSync : Event // 同步
     class Prepared : Event // prepare完成(异步prepare在完成的时候发送该事件)
     class Start : Event // 开始播放
     class Pause : Event // 暂停播放
