@@ -29,7 +29,7 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
   private val playerLogic: IBeggarPlayerLogic
 
   // 核心逻辑处理
-  private val coreManager: BeggarPlayerCoreManager
+  internal val coreManager: BeggarPlayerCoreManager
 
   // UI
   private lateinit var textureView: BeggarPlayerTextureView

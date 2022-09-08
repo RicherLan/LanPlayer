@@ -29,7 +29,7 @@ class BeggarPlayerCoreManager(
 ) {
 
   // 状态机
-  private var stateMachine: SyncStateMachine
+  internal var stateMachine: SyncStateMachine
 
   // 播放器事件分发
   private val observerDispatcher = BeggarPlayerObserverDispatcher()

@@ -10,12 +10,12 @@ import com.beggar.statemachine.child.ChildStateMachineStateNode
  * description: 将状态机输出为 plant uml
  * [plant uml 语法](https://plantuml.com/zh/state-diagram)
  */
-fun SyncStateMachine.toUml(stateMachine: SyncStateMachine): String {
+fun SyncStateMachine.toUml(): String {
   val body = StringBuilder()
   // start
   body.append("@startuml")
   // 状态机关系图
-  body.append(getStateUml(stateMachine))
+  body.append(getStateUml(this))
   // end
   body.append("@enduml")
   return body.toString()
