@@ -36,6 +36,7 @@ class BeggarPlayerCoreManager(
 
   init {
     stateMachine = buildStateMachine()
+    initPlayerLogic()
   }
 
   /**
@@ -87,11 +88,11 @@ class BeggarPlayerCoreManager(
         initializedState,
         SetDataSource::class.java
       )
-      .transition(  // 异步准备 --> preparingState
-        "PrepareAsync",
+      .transition(  // 同步或者异步准备 --> preparingState
+        "Prepare",
         setOf(initializedState, stoppedState),
         preparingState,
-        PrepareAsync::class.java
+        Prepare::class.java
       )
       .transition(  // 准备完成 --> preparedState
         "Prepared",
@@ -127,6 +128,28 @@ class BeggarPlayerCoreManager(
     return builder.build()
   }
 
+  // 初始化PlayerLogic
+  private fun initPlayerLogic() {
+    // 监听播放器的事件
+    val callback = object : IBeggarPlayerLogic.IPlayerCallback {
+      // 异步加载完成
+      override fun onPrepared() {
+        sendEvent(Prepared(false))
+      }
+
+      // 播放完成
+      override fun onCompletion() {
+        sendEvent(Complete())
+      }
+
+      // error
+      override fun onError() {
+        sendEvent(Error())
+      }
+    }
+    playerLogic.setPlayerCallback(callback)
+  }
+
   internal fun registerObserver(observer: IBeggarPlayerStateObserver) {
     observerDispatcher.registerObserver(observer)
   }
@@ -146,9 +169,8 @@ class BeggarPlayerCoreManager(
   class PlayerEvent {
     class Reset : Event // 进idle
     class SetDataSource(val dataSource: BeggarPlayerDataSource) : Event // 设置数据源
-    class PrepareAsync : Event // 异步
-    class PrepareSync : Event // 同步
-    class Prepared : Event // prepare完成(异步prepare在完成的时候发送该事件)
+    class Prepare(val isSync: Boolean) : Event // 区分同步和异步
+    class Prepared(val isSync: Boolean) : Event // prepare完成(异步prepare在完成的时候发送该事件)
     class Start : Event // 开始播放
     class Pause : Event // 暂停播放
     class Stop : Event // 停止播放
@@ -175,6 +197,8 @@ class BeggarPlayerCoreManager(
   private val initializedState = object : State<SetDataSource>("initializedState") {
     override fun onEnter(param: SetDataSource) {
       super.onEnter(param)
+      // 设置数据源
+      playerLogic.setDataSource(param.dataSource)
       observerDispatcher.onEnterInitialized()
     }
 
@@ -187,15 +211,14 @@ class BeggarPlayerCoreManager(
   private val preparingState = object : State<Prepare>("preparingState") {
     override fun onEnter(param: Prepare) {
       super.onEnter(param)
-      // 同步prepare完毕，直接发送prepare完成事件
+      // 同步
       if (param.isSync) {
         playerLogic.prepareSync()
-        sendEvent(Prepared())
+        // 准备完成
+        sendEvent(Prepared(true))
+
       } else {
-        /**
-         * 异步prepare完成是在播放器的回调中
-         * @see IBeggarPlayerLogic.IPlayerCallback.onPrepared
-         */
+        // 异步，准备完成通过回调
         playerLogic.prepareAsync()
       }
       observerDispatcher.onEnterPreparing()

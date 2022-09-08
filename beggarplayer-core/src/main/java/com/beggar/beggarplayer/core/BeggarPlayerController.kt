@@ -58,13 +58,6 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
     coreManager.unregisterObserver(observer)
   }
 
-  /**
-   * 向状态机发送事件
-   */
-  private fun sendEvent(event: Event) {
-    coreManager.sendEvent(event)
-  }
-
   // ********************* 生命周期相关 *********************
   override fun reset() {
     coreManager.sendEvent(PlayerEvent.Reset())
@@ -133,31 +126,7 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
    * 默认采用系统播放器实现
    */
   private fun buildPlayerLogic(): IBeggarPlayerLogic {
-    // 监听播放器的事件
-    val callback = object : IBeggarPlayerLogic.IPlayerCallback {
-      override fun onPrepared() {
-        sendEvent(PlayerEvent.Prepared())
-      }
-
-      override fun onCompletion() {
-        sendEvent(PlayerEvent.Complete())
-      }
-
-      override fun onError() {
-        sendEvent(PlayerEvent.Error())
-      }
-    }
-
-    // 替换为外面的实现
-    if (config.playerLogic != null) {
-      config.playerLogic.setPlayerCallback(callback)
-      return config.playerLogic
-    }
-
-    // 默认实现
-    val systemMediaPlayerLogic = SystemMediaPlayerLogic()
-    systemMediaPlayerLogic.setPlayerCallback(callback)
-    return systemMediaPlayerLogic
+    return SystemMediaPlayerLogic()
   }
 
   /**
