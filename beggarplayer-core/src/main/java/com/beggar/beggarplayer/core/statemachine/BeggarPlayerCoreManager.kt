@@ -1,7 +1,10 @@
 package com.beggar.beggarplayer.core.statemachine
 
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
-import com.beggar.beggarplayer.core.statemachine.BeggarPlayerStateMachineManager.PlayerEvent.*
+import com.beggar.beggarplayer.core.observer.BeggarPlayerObserverDispatcher
+import com.beggar.beggarplayer.core.observer.IBeggarPlayerStateObserver
+import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
+import com.beggar.beggarplayer.core.statemachine.BeggarPlayerCoreManager.PlayerEvent.*
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
@@ -9,14 +12,27 @@ import com.beggar.statemachine.SyncStateMachine
 /**
  * author: BeggarLan
  * created on: 2022/9/8 12:49 下午
- * description: 播放器状态机管理
+ * description: 播放器核心逻辑处理
+ *
+ * 1. 状态机构建和维护
+ * 2. 播放器核心逻辑处理，如开始、暂停等
+ * 3. 提供播放器状态监听
+ *
+ *
+ * 状态流转图：
+ * @see <a href=>https://developer.android.google.cn/reference/android/media/MediaPlayer#state-diagram</a>
+ *
+ * @param playerLogic   播放器具体逻辑
  */
-class BeggarPlayerStateMachineManager {
+class BeggarPlayerCoreManager(
+  val playerLogic: IBeggarPlayerLogic
+) {
 
   // 状态机
   private var stateMachine: SyncStateMachine
 
-  private var stateObserver: IBeggarPlayerStateMachineObserver? = null
+  // 播放器事件分发
+  private val observerDispatcher = BeggarPlayerObserverDispatcher()
 
   init {
     stateMachine = buildStateMachine()
@@ -44,15 +60,18 @@ class BeggarPlayerStateMachineManager {
     return builder.build()
   }
 
-  // 设置监听
-  fun setStateObserver(observer: IBeggarPlayerStateMachineObserver?) {
-    stateObserver = observer
+  fun registerObserver(observer: IBeggarPlayerStateObserver) {
+    observerDispatcher.registerObserver(observer)
+  }
+
+  fun unregisterObserver(observer: IBeggarPlayerStateObserver) {
+    observerDispatcher.unregisterObserver(observer)
   }
 
   /**
    * 向状态机发送事件
    */
-  fun sendEvent(event: Event) {
+  internal fun sendEvent(event: Event) {
     stateMachine.sendEvent(event)
   }
 
@@ -75,7 +94,7 @@ class BeggarPlayerStateMachineManager {
   protected val idleState = object : State<Any>("IdleState") {
     override fun onEnter(param: Any) {
       super.onEnter(param)
-      stateObserver?.onEnterIdle()
+      observerDispatcher.onEnterIdle()
     }
 
     override fun onExit() {
@@ -87,7 +106,7 @@ class BeggarPlayerStateMachineManager {
   protected val initializedState = object : State<SetDataSource>("initializedState") {
     override fun onEnter(param: SetDataSource) {
       super.onEnter(param)
-      stateObserver?.onEnterInitialized()
+      observerDispatcher.onEnterInitialized()
     }
 
     override fun onExit() {
@@ -99,7 +118,18 @@ class BeggarPlayerStateMachineManager {
   protected val preparingState = object : State<Prepare>("preparingState") {
     override fun onEnter(param: Prepare) {
       super.onEnter(param)
-      stateObserver?.onEnterPreparing()
+      // 同步prepare完毕，直接发送prepare完成事件
+      if (param.isSync) {
+        playerLogic.prepareSync()
+        sendEvent(Prepared())
+      } else {
+        /**
+         * 异步prepare完成是在播放器的回调中
+         * @see IBeggarPlayerLogic.IPlayerCallback.onPrepared
+         */
+        playerLogic.prepareAsync()
+      }
+      observerDispatcher.onEnterPreparing()
     }
 
     override fun onExit() {
@@ -111,7 +141,7 @@ class BeggarPlayerStateMachineManager {
   protected val preparedState = object : State<Prepared>("preparedState") {
     override fun onEnter(param: Prepared) {
       super.onEnter(param)
-      stateObserver?.onEnterPrepared()
+      observerDispatcher.onEnterPrepared()
     }
 
     override fun onExit() {
@@ -123,7 +153,8 @@ class BeggarPlayerStateMachineManager {
   protected val startedState = object : State<Start>("startedState") {
     override fun onEnter(param: Start) {
       super.onEnter(param)
-      stateObserver?.onEnterStarted()
+      playerLogic.start()
+      observerDispatcher.onEnterStarted()
     }
 
     override fun onExit() {
@@ -135,7 +166,8 @@ class BeggarPlayerStateMachineManager {
   protected val pausedState = object : State<Pause>("pausedState") {
     override fun onEnter(param: Pause) {
       super.onEnter(param)
-      stateObserver?.onEnterPaused()
+      playerLogic.pause()
+      observerDispatcher.onEnterPaused()
     }
 
     override fun onExit() {
@@ -147,7 +179,8 @@ class BeggarPlayerStateMachineManager {
   protected val stoppedState = object : State<Stop>("stoppedState") {
     override fun onEnter(param: Stop) {
       super.onEnter(param)
-      stateObserver?.onEnterStopped()
+      playerLogic.stop()
+      observerDispatcher.onEnterStopped()
     }
 
     override fun onExit() {
@@ -159,7 +192,7 @@ class BeggarPlayerStateMachineManager {
   protected val completedState = object : State<Complete>("completedState") {
     override fun onEnter(param: Complete) {
       super.onEnter(param)
-      stateObserver?.onEnterCompleted()
+      observerDispatcher.onEnterCompleted()
     }
 
     override fun onExit() {
@@ -171,7 +204,7 @@ class BeggarPlayerStateMachineManager {
   protected val errorState = object : State<Error>("errorState") {
     override fun onEnter(param: Error) {
       super.onEnter(param)
-      stateObserver?.onEnterError()
+      observerDispatcher.onEnterError()
     }
 
     override fun onExit() {
@@ -183,7 +216,8 @@ class BeggarPlayerStateMachineManager {
   protected val endState = object : State<End>("endState") {
     override fun onEnter(param: End) {
       super.onEnter(param)
-      stateObserver?.onEnterEnd()
+      playerLogic.release()
+      observerDispatcher.onEnterEnd()
     }
 
     override fun onExit() {

@@ -1,7 +1,6 @@
 package com.beggar.beggarplayer.core.observer
 
 import com.beggar.beggarplayer.core.BeggarPlayerState
-import com.beggar.beggarplayer.core.statemachine.IBeggarPlayerStateMachineObserver
 import com.beggar.player.common.collection.observe.ObserverDispatcher
 
 /**
@@ -9,8 +8,8 @@ import com.beggar.player.common.collection.observe.ObserverDispatcher
  * created on: 2022/9/7 8:35 下午
  * description: 播放器事件分发
  */
-class BeggarPlayerObserverDispatcher : ObserverDispatcher<IBeggarPlayerStateMachineObserver>(),
-  IBeggarPlayerStateMachineObserver {
+class BeggarPlayerObserverDispatcher : ObserverDispatcher<IBeggarPlayerStateObserver>(),
+  IBeggarPlayerStateObserver {
 
   // 当前状态
   @BeggarPlayerState
