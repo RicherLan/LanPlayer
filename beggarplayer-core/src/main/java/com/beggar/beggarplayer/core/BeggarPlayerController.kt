@@ -47,6 +47,17 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
   }
 
   /**
+   * 使用方要设置
+   */
+  override fun setTextureView(view: BeggarPlayerTextureView) {
+    if (textureView == view) {
+      return
+    }
+    textureView = view
+    // TODO: view更换时其他逻辑处理
+  }
+
+  /**
    * 构造logic，允许外部替换logic
    * 默认采用系统播放器实现
    */
@@ -258,14 +269,6 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
     observerDispatcher.unregisterObserver(observer)
   }
 
-  override fun setTextureView(view: BeggarPlayerTextureView) {
-    if (textureView == view) {
-      return
-    }
-    textureView = view
-    // TODO: view更换时其他逻辑处理
-  }
-
   /**
    * 向状态机发送事件
    */
@@ -288,11 +291,6 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
 
   override fun prepareAsync() {
     sendEvent(Prepare(false))
-  }
-
-  // 子类在异步prepare完成时调用
-  protected fun onPreparedByAsync() {
-    sendEvent(Prepared())
   }
 
   override fun start() {
