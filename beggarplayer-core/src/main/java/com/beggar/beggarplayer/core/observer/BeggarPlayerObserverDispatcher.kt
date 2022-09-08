@@ -1,7 +1,7 @@
 package com.beggar.beggarplayer.core.observer
 
 import com.beggar.beggarplayer.core.BeggarPlayerState
-import com.beggar.player.common.collection.observe.ObserverDispatcher
+import com.beggar.player.common.observer.ObserverDispatcher
 
 /**
  * author: BeggarLan

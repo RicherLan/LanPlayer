@@ -13,11 +13,11 @@ import com.beggar.statemachine.child.ChildStateMachineStateNode
 fun SyncStateMachine.toUml(): String {
   val body = StringBuilder()
   // start
-  body.append("@startuml")
+  body.append("@startuml").appendLine()
   // 状态机关系图
   body.append(getStateUml(this))
   // end
-  body.append("@enduml")
+  body.append("@enduml").appendLine()
   return body.toString()
 }
 
@@ -27,18 +27,18 @@ fun SyncStateMachine.toUml(): String {
 private fun SyncStateMachine.getStateUml(stateMachine: SyncStateMachine): String {
   val body = StringBuilder()
   // initState
-  body.append("[*]").append("-->").append(stateMachine.initialState.state.name)
+  body.append("[*]").append("-->").append(stateMachine.initialState.state.name).appendLine()
   // 描述所有节点
   stateMachine.states.forEach {
     val state = it.state
     // 描述一个状态节点
-    body.append("state ").append(state.name).append("{")
+    body.append("state ").append(state.name).append("{").appendLine()
     // 递归拼接子状态机
     if (state is ChildStateMachineState) {
       val childStateMachine = (state.stateNode as ChildStateMachineStateNode).childStateMachine
       body.append(getStateUml(childStateMachine))
     }
-    body.append("}")
+    body.append("}").appendLine()
   }
 
   // 描述节点之间的转化关系

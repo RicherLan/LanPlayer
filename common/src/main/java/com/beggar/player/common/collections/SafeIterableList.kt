@@ -1,4 +1,4 @@
-package com.beggar.player.common.collection
+package com.beggar.player.common.collections
 
 /**
  * author: BeggarLan

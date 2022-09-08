@@ -8,7 +8,6 @@ import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
 import com.beggar.beggarplayer.core.statemachine.BeggarPlayerCoreManager
 import com.beggar.beggarplayer.core.statemachine.BeggarPlayerCoreManager.PlayerEvent
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
-import com.beggar.statemachine.Event
 
 /**
  * author: BeggarLan

@@ -1,6 +1,6 @@
-package com.beggar.player.common.collection.observe
+package com.beggar.player.common.observer
 
-import com.beggar.player.common.collection.SafeIterableList
+import com.beggar.player.common.collections.SafeIterableList
 
 /**
  * author: BeggarLan
