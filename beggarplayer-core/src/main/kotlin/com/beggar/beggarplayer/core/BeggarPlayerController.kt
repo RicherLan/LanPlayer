@@ -15,7 +15,7 @@ import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
  * created on: 2022/8/30 8:51 下午
  * description: 播放器controller
  *
- * 该类主要负责组装功能(状态机、播放器具体逻辑、UI)
+ * 该类主要负责组装功能(状态机、播放器具体逻辑、textureView)
  *
  * @param config 配置
  */
@@ -34,9 +34,6 @@ class BeggarPlayerController(
   // 核心逻辑处理
   internal val coreManager: BeggarPlayerCoreManager
 
-  // UI
-  private lateinit var textureView: BeggarPlayerTextureView
-
   init {
     playerLogic = buildPlayerLogic()
     coreManager = buildStateMachineManager()
@@ -46,11 +43,7 @@ class BeggarPlayerController(
    * 使用方要设置
    */
   override fun setTextureView(view: BeggarPlayerTextureView) {
-    if (textureView == view) {
-      return
-    }
-    textureView = view
-    // TODO: view更换时其他逻辑处理
+    coreManager.setTextureView(view)
   }
 
   override fun registerObserver(observer: IBeggarPlayerStateObserver) {

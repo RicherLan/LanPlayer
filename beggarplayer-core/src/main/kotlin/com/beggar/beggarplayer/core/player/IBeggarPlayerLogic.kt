@@ -1,5 +1,7 @@
 package com.beggar.beggarplayer.core.player
 
+import android.view.Surface
+
 /**
  * author: BeggarLan
  * created on: 2022/9/7 5:54 下午
@@ -9,6 +11,11 @@ package com.beggar.beggarplayer.core.player
 interface IBeggarPlayerLogic : IBeggarPlayer {
 
   fun setPlayerCallback(callback: IPlayerCallback)
+
+  /**
+   * 设置画面渲染的surface
+   */
+  fun setSurface(surface: Surface?)
 
   // 播放器的一些回调
   interface IPlayerCallback {

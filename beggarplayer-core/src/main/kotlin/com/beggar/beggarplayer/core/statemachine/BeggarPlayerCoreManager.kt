@@ -1,11 +1,15 @@
 package com.beggar.beggarplayer.core.statemachine
 
+import android.graphics.SurfaceTexture
+import android.view.Surface
+import android.view.TextureView
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.log.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.observer.BeggarPlayerObserverDispatcher
 import com.beggar.beggarplayer.core.observer.IBeggarPlayerStateObserver
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.statemachine.BeggarPlayerCoreManager.PlayerEvent.*
+import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
 import com.beggar.statemachine.SyncStateMachine
@@ -36,6 +40,28 @@ class BeggarPlayerCoreManager(
 
   // 状态机
   internal var stateMachine: SyncStateMachine
+
+  // 播放器进行画面渲染的view
+  private var textureView: BeggarPlayerTextureView? = null
+
+  // 播放器进行画面渲染的surface
+  private var surface: Surface? = null
+
+  // 监听SurfaceTexture
+  private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+    override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
+
+    }
+
+    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
+    }
+
+    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+    }
+
+    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
+    }
+  }
 
   // 播放器事件分发
   private val observerDispatcher = BeggarPlayerObserverDispatcher()
@@ -340,18 +366,32 @@ class BeggarPlayerCoreManager(
     playerLogic.setPlayerCallback(callback)
   }
 
-  internal fun registerObserver(observer: IBeggarPlayerStateObserver) {
+  /**
+   * 使用方要设置
+   */
+  fun setTextureView(view: BeggarPlayerTextureView) {
+    if (textureView == view) {
+      return
+    }
+    // 释放之前的
+    releaseSurface()
+    textureView = view
+    textureView?.surfaceTextureListener = surfaceTextureListener
+    // TODO: 补全
+  }
+
+  fun registerObserver(observer: IBeggarPlayerStateObserver) {
     observerDispatcher.registerObserver(observer)
   }
 
-  internal fun unregisterObserver(observer: IBeggarPlayerStateObserver) {
+  fun unregisterObserver(observer: IBeggarPlayerStateObserver) {
     observerDispatcher.unregisterObserver(observer)
   }
 
   /**
    * 向状态机发送事件
    */
-  internal fun sendEvent(event: Event) {
+  fun sendEvent(event: Event) {
     stateMachine.sendEvent(event)
   }
 
@@ -364,6 +404,15 @@ class BeggarPlayerCoreManager(
    */
   private fun handleSeekEvent(event: SeekTo) {
     playerLogic.seekTo(event.timeMs)
+  }
+
+  // 释放surface
+  private fun releaseSurface() {
+    playerLogic.setSurface(null)
+    surface?.release()
+    surface = null
+    textureView?.surfaceTextureListener = null
+    textureView = null
   }
 
 }
