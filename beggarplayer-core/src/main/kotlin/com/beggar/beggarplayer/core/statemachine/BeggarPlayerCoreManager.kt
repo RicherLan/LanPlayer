@@ -234,7 +234,7 @@ class BeggarPlayerCoreManager(
         Release::class.java
       )
       .transition(  // 除End状态外, 任何状态  --error--> errorState
-        "release",
+        "error",
         setOf(
           idleState, initializedState, preparingState, preparedState, startedState,
           pausedState, stoppedState, completedState

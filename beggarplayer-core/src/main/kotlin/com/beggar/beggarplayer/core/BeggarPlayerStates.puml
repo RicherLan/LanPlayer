@@ -9,6 +9,8 @@
       FontName Impact
     }
     [*]-->IdleState
+    任何状态 --> endState : (Release)
+    除endState外的任何状态 --> errorState : (Error)
     state IdleState{
     }
     state initializedState{
@@ -30,43 +32,25 @@
     state endState{
     }
     initializedState --> IdleState : (Reset)
-    initializedState --> endState : (Release)
-    initializedState --> errorState : (Error)
     initializedState --> preparingState : (Prepare)
     initializedState --> preparedState : (Prepared)
     preparingState --> IdleState : (Reset)
-    preparingState --> endState : (Release)
-    preparingState --> errorState : (Error)
     preparingState --> preparedState : (Prepared)
     preparedState --> IdleState : (Reset)
-    preparedState --> endState : (Release)
-    preparedState --> errorState : (Error)
     preparedState --> startedState : (Start)
     preparedState --> stoppedState : (Stop)
     startedState --> IdleState : (Reset)
-    startedState --> endState : (Release)
-    startedState --> errorState : (Error)
     startedState --> pausedState : (Pause)
     startedState --> stoppedState : (Stop)
     startedState --> completedState : (Complete)
     pausedState --> IdleState : (Reset)
-    pausedState --> endState : (Release)
-    pausedState --> errorState : (Error)
     pausedState --> startedState : (Start)
     pausedState --> stoppedState : (Stop)
     stoppedState --> IdleState : (Reset)
-    stoppedState --> endState : (Release)
-    stoppedState --> errorState : (Error)
     stoppedState --> preparingState : (Prepare)
     stoppedState --> preparedState : (Prepared)
     completedState --> IdleState : (Reset)
-    completedState --> endState : (Release)
-    completedState --> errorState : (Error)
     completedState --> startedState : (Start)
     completedState --> stoppedState : (Stop)
-    errorState --> IdleState : (Reset)
-    errorState --> endState : (Release)
-    IdleState --> endState : (Release)
-    IdleState --> errorState : (Error)
     IdleState --> initializedState : (SetDataSource)
     @enduml
