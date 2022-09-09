@@ -15,6 +15,10 @@ open class StateNode(
   // 当前节点所在的状态机(当前层的状态机)
   private lateinit var stateMachine: SyncStateMachine
 
+  init {
+    state.stateNode = this
+  }
+
   // 初始化，必须调用
   open fun init(machine: SyncStateMachine) {
     stateMachine = machine

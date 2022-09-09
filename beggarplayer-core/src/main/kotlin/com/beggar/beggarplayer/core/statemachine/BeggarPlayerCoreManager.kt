@@ -40,138 +40,6 @@ class BeggarPlayerCoreManager(
   // 播放器事件分发
   private val observerDispatcher = BeggarPlayerObserverDispatcher()
 
-  init {
-    stateMachine = buildStateMachine()
-    BeggarPlayerLogger.log(TAG, stateMachine.toUml())
-    initPlayerLogic()
-  }
-
-  /**
-   * 构造状态机
-   */
-  private fun buildStateMachine(): SyncStateMachine {
-    val builder = SyncStateMachine.Builder()
-      .setInitialState(idleState)
-      .state(idleState)
-      .state(initializedState)
-      .state(preparingState)
-      .state(preparedState)
-      .state(startedState)
-      .state(pausedState)
-      .state(stoppedState)
-      .state(completedState)
-      .state(errorState)
-      .state(endState)
-      .transition(  // 除End状态外，任何状态  --reset--> idleState
-        "reset",
-        setOf(
-          initializedState, preparingState, preparedState, startedState,
-          pausedState, stoppedState, completedState, errorState
-        ),
-        idleState,
-        Reset::class.java
-      )
-      .transition(  // 任何状态  --Release--> endState
-        "release",
-        setOf(
-          idleState, initializedState, preparingState, preparedState, startedState,
-          pausedState, stoppedState, completedState, errorState
-        ),
-        endState,
-        Release::class.java
-      )
-      .transition(  // 除End状态外, 任何状态  --error--> errorState
-        "release",
-        setOf(
-          idleState, initializedState, preparingState, preparedState, startedState,
-          pausedState, stoppedState, completedState
-        ),
-        errorState,
-        Error::class.java
-      )
-      .transition(  // 设置数据源后 --> initializedState
-        "setDataSource",
-        idleState,
-        initializedState,
-        SetDataSource::class.java
-      )
-      .transition(  // 同步或者异步准备 --> preparingState
-        "Prepare",
-        setOf(initializedState, stoppedState),
-        preparingState,
-        Prepare::class.java
-      )
-      .transition(  // 准备完成 --> preparedState
-        "Prepared",
-        setOf(initializedState, preparingState, stoppedState),
-        preparedState,
-        Prepared::class.java
-      )
-      .transition(  // 开始播放 --> startedState
-        "Start",
-        setOf(preparedState, pausedState, completedState),
-        startedState,
-        Start::class.java
-      )
-      .transition(  // 暂停播放 --> pausedState
-        "Pause",
-        setOf(startedState),
-        pausedState,
-        Pause::class.java
-      )
-      .transition(  // 停止播放 --> stoppedState
-        "Stop",
-        setOf(preparedState, startedState, pausedState, completedState),
-        stoppedState,
-        Stop::class.java
-      )
-      .transition(  // 完成播放 --> completedState
-        "Complete",
-        setOf(startedState),
-        completedState,
-        Complete::class.java
-      )
-
-    return builder.build()
-  }
-
-  // 初始化PlayerLogic
-  private fun initPlayerLogic() {
-    // 监听播放器的事件
-    val callback = object : IBeggarPlayerLogic.IPlayerCallback {
-      // 异步加载完成
-      override fun onPrepared() {
-        sendEvent(Prepared(false))
-      }
-
-      // 播放完成
-      override fun onCompletion() {
-        sendEvent(Complete())
-      }
-
-      // error
-      override fun onError() {
-        sendEvent(Error())
-      }
-    }
-    playerLogic.setPlayerCallback(callback)
-  }
-
-  internal fun registerObserver(observer: IBeggarPlayerStateObserver) {
-    observerDispatcher.registerObserver(observer)
-  }
-
-  internal fun unregisterObserver(observer: IBeggarPlayerStateObserver) {
-    observerDispatcher.unregisterObserver(observer)
-  }
-
-  /**
-   * 向状态机发送事件
-   */
-  internal fun sendEvent(event: Event) {
-    stateMachine.sendEvent(event)
-  }
-
   // ********************* 状态机事件 *********************
   class PlayerEvent {
     class Reset : Event // 进idle
@@ -324,5 +192,137 @@ class BeggarPlayerCoreManager(
     }
   }
   // ********************* 状态 *********************
+
+  init {
+    stateMachine = buildStateMachine()
+    BeggarPlayerLogger.log(TAG, "\n\n" + stateMachine.toUml())
+    initPlayerLogic()
+  }
+
+  /**
+   * 构造状态机
+   */
+  private fun buildStateMachine(): SyncStateMachine {
+    val builder = SyncStateMachine.Builder()
+      .setInitialState(idleState)
+      .state(idleState)
+      .state(initializedState)
+      .state(preparingState)
+      .state(preparedState)
+      .state(startedState)
+      .state(pausedState)
+      .state(stoppedState)
+      .state(completedState)
+      .state(errorState)
+      .state(endState)
+      .transition(  // 除End状态外，任何状态  --reset--> idleState
+        "reset",
+        setOf(
+          initializedState, preparingState, preparedState, startedState,
+          pausedState, stoppedState, completedState, errorState
+        ),
+        idleState,
+        Reset::class.java
+      )
+      .transition(  // 任何状态  --Release--> endState
+        "release",
+        setOf(
+          idleState, initializedState, preparingState, preparedState, startedState,
+          pausedState, stoppedState, completedState, errorState
+        ),
+        endState,
+        Release::class.java
+      )
+      .transition(  // 除End状态外, 任何状态  --error--> errorState
+        "release",
+        setOf(
+          idleState, initializedState, preparingState, preparedState, startedState,
+          pausedState, stoppedState, completedState
+        ),
+        errorState,
+        Error::class.java
+      )
+      .transition(  // 设置数据源后 --> initializedState
+        "setDataSource",
+        idleState,
+        initializedState,
+        SetDataSource::class.java
+      )
+      .transition(  // 同步或者异步准备 --> preparingState
+        "Prepare",
+        setOf(initializedState, stoppedState),
+        preparingState,
+        Prepare::class.java
+      )
+      .transition(  // 准备完成 --> preparedState
+        "Prepared",
+        setOf(initializedState, preparingState, stoppedState),
+        preparedState,
+        Prepared::class.java
+      )
+      .transition(  // 开始播放 --> startedState
+        "Start",
+        setOf(preparedState, pausedState, completedState),
+        startedState,
+        Start::class.java
+      )
+      .transition(  // 暂停播放 --> pausedState
+        "Pause",
+        setOf(startedState),
+        pausedState,
+        Pause::class.java
+      )
+      .transition(  // 停止播放 --> stoppedState
+        "Stop",
+        setOf(preparedState, startedState, pausedState, completedState),
+        stoppedState,
+        Stop::class.java
+      )
+      .transition(  // 完成播放 --> completedState
+        "Complete",
+        setOf(startedState),
+        completedState,
+        Complete::class.java
+      )
+
+    return builder.build()
+  }
+
+  // 初始化PlayerLogic
+  private fun initPlayerLogic() {
+    // 监听播放器的事件
+    val callback = object : IBeggarPlayerLogic.IPlayerCallback {
+      // 异步加载完成
+      override fun onPrepared() {
+        sendEvent(Prepared(false))
+      }
+
+      // 播放完成
+      override fun onCompletion() {
+        sendEvent(Complete())
+      }
+
+      // error
+      override fun onError() {
+        sendEvent(Error())
+      }
+    }
+    playerLogic.setPlayerCallback(callback)
+  }
+
+  internal fun registerObserver(observer: IBeggarPlayerStateObserver) {
+    observerDispatcher.registerObserver(observer)
+  }
+
+  internal fun unregisterObserver(observer: IBeggarPlayerStateObserver) {
+    observerDispatcher.unregisterObserver(observer)
+  }
+
+  /**
+   * 向状态机发送事件
+   */
+  internal fun sendEvent(event: Event) {
+    stateMachine.sendEvent(event)
+  }
 
 }

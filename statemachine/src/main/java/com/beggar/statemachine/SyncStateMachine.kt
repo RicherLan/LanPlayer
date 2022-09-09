@@ -209,6 +209,7 @@ abstract class SyncStateMachine(
       check(!states.contains(stateNode.state)) {
         "state:" + stateNode.state.name + " has already added"
       }
+      states.add(stateNode.state)
     }
 
     // 添加一组转换
@@ -238,7 +239,7 @@ abstract class SyncStateMachine(
 
     protected fun checkInitialState(): State<*> {
       check(states.contains(initialState)) {
-        "initialState $initialState not added!"
+        "initialState ${initialState?.name} not added!"
       }
       return initialState ?: throw StateMachineException("initialState is null!")
     }

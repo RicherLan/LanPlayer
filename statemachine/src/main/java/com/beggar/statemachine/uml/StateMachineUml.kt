@@ -47,8 +47,10 @@ private fun SyncStateMachine.getStateUml(stateMachine: SyncStateMachine): String
     // 从该节点出发所有的转化关系
     it.value.forEach {
       val toState = it.to
-      // fromState-->toState
-      body.append(fromState.name).append("-->").append(toState.name).appendLine()
+      // fromState-->toState : (event)
+      body.append(fromState.name).append(" --> ").append(toState.name) // fromState-->toState
+        .append(" : ").append("(" + it.eventType.simpleName + ")") // event
+        .appendLine()
     }
   }
 
