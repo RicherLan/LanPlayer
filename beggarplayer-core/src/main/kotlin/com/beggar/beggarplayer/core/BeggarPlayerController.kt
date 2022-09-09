@@ -97,6 +97,7 @@ class BeggarPlayerController(
   // ********************* 生命周期相关 *********************
 
   // ********************* 其他操作方法 *********************
+  // TODO: 这些操作要在state中处理
   override fun seekTo(timeMs: Long) {
     playerLogic.seekTo(timeMs)
   }

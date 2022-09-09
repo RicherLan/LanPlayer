@@ -3,6 +3,7 @@ package com.beggar.beggarplayer.core.player.systemplayer
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Build
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.log.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
@@ -101,51 +102,56 @@ class SystemMediaPlayerLogic(private val context: Context) : IBeggarPlayerLogic 
   }
 
   override fun prepareSync() {
-    TODO("Not yet implemented")
+    mediaPlayer.prepare()
   }
 
   override fun prepareAsync() {
-    TODO("Not yet implemented")
+    mediaPlayer.prepareAsync()
   }
 
   override fun start() {
-    TODO("Not yet implemented")
+    mediaPlayer.start()
   }
 
   override fun pause() {
-    TODO("Not yet implemented")
+    mediaPlayer.pause()
   }
 
   override fun stop() {
-    TODO("Not yet implemented")
+    mediaPlayer.stop()
   }
 
   override fun reset() {
-    TODO("Not yet implemented")
+    mediaPlayer.reset()
   }
 
   override fun release() {
-    TODO("Not yet implemented")
+    mediaPlayer.release()
   }
 
   override fun seekTo(timeMs: Long) {
-    TODO("Not yet implemented")
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      // 注意SEEK_CLOSEST有性能开销
+      mediaPlayer.seekTo(timeMs, MediaPlayer.SEEK_CLOSEST)
+    } else {
+      mediaPlayer.seekTo(timeMs.toInt())
+    }
   }
 
   override fun setVolume(volume: Float) {
-    TODO("Not yet implemented")
+    mediaPlayer.setVolume(volume, volume)
   }
 
   override fun setLoop(loop: Boolean) {
-    TODO("Not yet implemented")
+    mediaPlayer.isLooping = loop
   }
 
   override fun getVideoWidth(): Int {
-    TODO("Not yet implemented")
+    return mediaPlayer.videoWidth
   }
 
   override fun getVideoHeight(): Int {
-    TODO("Not yet implemented")
+    return mediaPlayer.videoHeight
   }
 
 }
