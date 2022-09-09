@@ -9,6 +9,7 @@
       FontName Impact
     }
     [*]-->IdleState
+    除endState外的任何状态 --> IdleState : (Reset)
     任何状态 --> endState : (Release)
     除endState外的任何状态 --> errorState : (Error)
     state IdleState{
@@ -39,13 +40,16 @@
     preparedState --> IdleState : (Reset)
     preparedState --> startedState : (Start)
     preparedState --> stoppedState : (Stop)
+    preparedState --> preparedState : (SeekTo)
     startedState --> IdleState : (Reset)
     startedState --> pausedState : (Pause)
     startedState --> stoppedState : (Stop)
     startedState --> completedState : (Complete)
+    startedState --> startedState : (SeekTo)
     pausedState --> IdleState : (Reset)
     pausedState --> startedState : (Start)
     pausedState --> stoppedState : (Stop)
+    pausedState --> pausedState : (SeekTo)
     stoppedState --> IdleState : (Reset)
     stoppedState --> preparingState : (Prepare)
     stoppedState --> preparedState : (Prepared)
