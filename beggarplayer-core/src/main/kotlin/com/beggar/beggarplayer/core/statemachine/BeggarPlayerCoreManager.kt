@@ -49,7 +49,7 @@ class BeggarPlayerCoreManager(
     class Start : Event // 开始播放
     class Pause : Event // 暂停播放
     class Stop : Event // 停止播放
-    class SeekTo(timeMs: Long) : Event // 跳转
+    class SeekTo(val timeMs: Long) : Event // 跳转
     class Complete : Event // 播放完毕
     class Error : Event // 出错
     class Release : Event // 释放，这里就结束播放器的生命了
@@ -114,6 +114,16 @@ class BeggarPlayerCoreManager(
     override fun onExit() {
       super.onExit()
     }
+
+    override fun handleEvent(event: Event): Boolean {
+      when (event) {
+        is SeekTo -> {
+          handleSeekEvent(event)
+          return true
+        }
+      }
+      return false
+    }
   }
 
   // 开始播放
@@ -127,6 +137,16 @@ class BeggarPlayerCoreManager(
     override fun onExit() {
       super.onExit()
     }
+
+    override fun handleEvent(event: Event): Boolean {
+      when (event) {
+        is SeekTo -> {
+          handleSeekEvent(event)
+          return true
+        }
+      }
+      return false
+    }
   }
 
   // 暂停
@@ -139,6 +159,16 @@ class BeggarPlayerCoreManager(
 
     override fun onExit() {
       super.onExit()
+    }
+
+    override fun handleEvent(event: Event): Boolean {
+      when (event) {
+        is SeekTo -> {
+          handleSeekEvent(event)
+          return true
+        }
+      }
+      return false
     }
   }
 
@@ -323,6 +353,17 @@ class BeggarPlayerCoreManager(
    */
   internal fun sendEvent(event: Event) {
     stateMachine.sendEvent(event)
+  }
+
+  /**
+   *  处理SeekTo事件
+   *  目前可以seekTo的状态有：
+   *  @see preparedState
+   *  @see startedState
+   *  @see pausedState
+   */
+  private fun handleSeekEvent(event: SeekTo) {
+    playerLogic.seekTo(event.timeMs)
   }
 
 }
