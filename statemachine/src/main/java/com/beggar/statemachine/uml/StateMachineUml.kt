@@ -14,6 +14,19 @@ fun SyncStateMachine.toUml(): String {
   val body = StringBuilder()
   // start
   body.append("@startuml").appendLine()
+
+  // skin
+  body.append("skinparam backgroundColor LightYellow\n" +
+      "skinparam state {\n" +
+      "  StartColor MediumBlue\n" +
+      "  EndColor Red\n" +
+      "  BackgroundColor Peru\n" +
+      "  BackgroundColor<<Warning>> Olive\n" +
+      "  BorderColor Gray\n" +
+      "  FontName Impact\n" +
+      "}")
+    .appendLine()
+
   // 状态机关系图
   body.append(getStateUml(this))
   // end

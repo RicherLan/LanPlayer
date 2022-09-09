@@ -1,4 +1,13 @@
 @startuml
+    skinparam backgroundColor LightYellow
+    skinparam state {
+      StartColor MediumBlue
+      EndColor Red
+      BackgroundColor Peru
+      BackgroundColor<<Warning>> Olive
+      BorderColor Gray
+      FontName Impact
+    }
     [*]-->IdleState
     state IdleState{
     }
