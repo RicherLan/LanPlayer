@@ -1,7 +1,5 @@
 package com.beggar.player.common.observer
 
-import com.beggar.player.common.collections.SafeIterableList
-
 /**
  * author: BeggarLan
  * created on: 2022/9/7 5:11 下午
@@ -10,7 +8,7 @@ import com.beggar.player.common.collections.SafeIterableList
  */
 open class ObserverDispatcher<Observer> {
 
-  private val observers = SafeIterableList<Observer>()
+  private val observers = com.beggar.player.common.collections.SafeIterableList<Observer>()
 
   fun registerObserver(observer: Observer) {
     observers.add(observer)

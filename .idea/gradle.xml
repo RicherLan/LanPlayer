@@ -15,7 +15,7 @@
             <option value="$PROJECT_DIR$/beggarplayer-core" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/state-machine" />
+            <option value="$PROJECT_DIR$/statemachine" />
           </set>
         </option>
       </GradleProjectSettings>
