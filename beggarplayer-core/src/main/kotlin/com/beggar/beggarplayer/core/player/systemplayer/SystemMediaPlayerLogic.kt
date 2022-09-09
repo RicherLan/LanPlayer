@@ -1,17 +1,18 @@
 package com.beggar.beggarplayer.core.player.systemplayer
 
+import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.log.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
-import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 
 /**
  * author: BeggarLan
  * created on: 2022/8/30 8:33 下午
  * description: 采用系统播放器实现
  */
-class SystemMediaPlayerLogic : IBeggarPlayerLogic {
+class SystemMediaPlayerLogic(private val context: Context) : IBeggarPlayerLogic {
 
   companion object {
     private const val TAG = "SystemMediaPlayer"
@@ -96,7 +97,7 @@ class SystemMediaPlayerLogic : IBeggarPlayerLogic {
   }
 
   override fun setDataSource(dataSource: BeggarPlayerDataSource) {
-    TODO("Not yet implemented")
+    mediaPlayer.setDataSource(context, dataSource.uri)
   }
 
   override fun prepareSync() {

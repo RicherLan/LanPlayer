@@ -1,5 +1,6 @@
 package com.beggar.beggarplayer.core
 
+import android.content.Context
 import com.beggar.beggarplayer.core.config.BeggarPlayerConfig
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.observer.IBeggarPlayerStateObserver
@@ -18,7 +19,10 @@ import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
  *
  * @param config 配置
  */
-class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPlayerController {
+class BeggarPlayerController(
+  private val context: Context,
+  private val config: BeggarPlayerConfig
+) : IBeggarPlayerController {
 
   companion object {
     private const val TAG = "BeggarBasePlayer"
@@ -125,7 +129,7 @@ class BeggarPlayerController(private val config: BeggarPlayerConfig) : IBeggarPl
    * 默认采用系统播放器实现
    */
   private fun buildPlayerLogic(): IBeggarPlayerLogic {
-    return SystemMediaPlayerLogic()
+    return SystemMediaPlayerLogic(context)
   }
 
   /**

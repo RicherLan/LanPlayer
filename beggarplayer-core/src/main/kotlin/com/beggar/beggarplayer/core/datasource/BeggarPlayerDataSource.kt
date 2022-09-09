@@ -9,6 +9,5 @@ import android.net.Uri
  * description: 播放器数据源
  */
 data class BeggarPlayerDataSource(
-  val context: Context,
   val uri: Uri
 )
