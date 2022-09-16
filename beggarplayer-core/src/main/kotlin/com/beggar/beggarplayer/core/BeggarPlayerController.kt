@@ -13,9 +13,7 @@ import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 /**
  * author: BeggarLan
  * created on: 2022/8/30 8:51 下午
- * description: 播放器controller
- *
- * 该类主要负责组装功能(状态机、播放器具体逻辑、textureView)
+ * description: 播放器入口类
  *
  * @param config 配置
  */
