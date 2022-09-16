@@ -28,15 +28,11 @@ class BeggarPlayerController(
     private const val TAG = "BeggarBasePlayer"
   }
 
-  // 播放器具体逻辑
-  private val playerLogic: IBeggarPlayerLogic
-
   // 核心逻辑处理
   internal val coreManager: BeggarPlayerCoreManager
 
   init {
-    playerLogic = buildPlayerLogic()
-    coreManager = buildStateMachineManager()
+    coreManager = BeggarPlayerCoreManager(buildPlayerLogic())
   }
 
   /**
@@ -90,31 +86,30 @@ class BeggarPlayerController(
   // ********************* 生命周期相关 *********************
 
   // ********************* 其他操作方法 *********************
-  // TODO: 这些操作要在state中处理
   override fun seekTo(timeMs: Long) {
-    playerLogic.seekTo(timeMs)
+    coreManager.sendEvent(PlayerEvent.SeekTo(timeMs))
   }
 
-  override fun setVolume(volume: Float) {
-    playerLogic.setVolume(volume)
+  override fun setVolume(leftVolume: Float, rightVolume: Float) {
+    coreManager.setVolume(leftVolume, rightVolume)
   }
 
   override fun setLoop(loop: Boolean) {
-    playerLogic.setLoop(loop)
+    coreManager.setLoop(loop)
   }
 
   override fun setMuteStatus(isMute: Boolean) {
-    TODO("Not yet implemented")
+    coreManager.setMuteStatus(isMute)
   }
   // ********************* 其他操作方法 *********************
 
   // ********************* 获得一些信息 *********************
   override fun getVideoWidth(): Int {
-    return playerLogic.getVideoWidth()
+    return coreManager.getVideoWidth()
   }
 
   override fun getVideoHeight(): Int {
-    return playerLogic.getVideoHeight()
+    return coreManager.getVideoHeight()
   }
   // ********************* 获得一些信息 *********************
 
@@ -124,15 +119,6 @@ class BeggarPlayerController(
    */
   private fun buildPlayerLogic(): IBeggarPlayerLogic {
     return SystemMediaPlayerLogic(context)
-  }
-
-  /**
-   * 构造状态机管理器
-   * 监听状态变化 --> 逻辑处理
-   */
-  private fun buildStateMachineManager(): BeggarPlayerCoreManager {
-    val stateMachineManager = BeggarPlayerCoreManager(playerLogic)
-    return stateMachineManager
   }
 
 }

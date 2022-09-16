@@ -60,7 +60,7 @@ interface IBeggarPlayer {
   /**
    * 设置音量
    */
-  fun setVolume(volume: Float)
+  fun setVolume(leftVolume: Float, rightVolume: Float)
 
   /**
    * 设置是否循环播放

@@ -26,7 +26,7 @@ import com.beggar.statemachine.uml.toUml
  *
  *
  * 状态流转图：
- * @see <a href=>https://developer.android.google.cn/reference/android/media/MediaPlayer#state-diagram</a>
+ * <a href=https://developer.android.google.cn/reference/android/media/MediaPlayer#state-diagram></a>
  *
  * @param playerLogic   播放器具体逻辑
  */
@@ -40,6 +40,11 @@ class BeggarPlayerCoreManager(
 
   // 状态机
   internal var stateMachine: SyncStateMachine
+
+  // 音量
+  // TODO: 默认值
+  private var leftVolume = 0f
+  private var rightVolume = 0f
 
   // 播放器进行画面渲染的view
   // TODO: 把surfaceTexture封装到textureView中，对外值提供surface
@@ -409,6 +414,51 @@ class BeggarPlayerCoreManager(
   fun sendEvent(event: Event) {
     stateMachine.sendEvent(event)
   }
+
+  /**
+   * 设置音量
+   */
+  fun setVolume(lV: Float, rV: Float) {
+    leftVolume = lV
+    rightVolume = rV
+    playerLogic.setVolume(leftVolume, rightVolume)
+  }
+
+  /**
+   * 设置静音状态
+   * @param isMute {@code true} 静音
+   */
+  fun setMuteStatus(isMute: Boolean) {
+    if (isMute) {
+      playerLogic.setVolume(0f, 0f)
+    } else {
+      setVolume(leftVolume, rightVolume)
+    }
+  }
+
+  /**
+   * 设置是否循环播放
+   */
+  fun setLoop(loop: Boolean) {
+    playerLogic.setLoop(loop)
+  }
+
+  // ********************* 获得一些信息 *********************
+  /**
+   * 获得视频的宽度
+   */
+  fun getVideoWidth(): Int {
+    return playerLogic.getVideoWidth()
+  }
+
+  /**
+   * 获得视频的高度
+   */
+  fun getVideoHeight(): Int {
+    return playerLogic.getVideoHeight()
+  }
+
+  // ********************* 获得一些信息 *********************
 
   /**
    *  处理SeekTo事件

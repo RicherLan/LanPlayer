@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
+import android.view.Surface
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.log.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
@@ -97,6 +98,10 @@ class SystemMediaPlayerLogic(private val context: Context) : IBeggarPlayerLogic 
     playerCallback = callback
   }
 
+  override fun setSurface(surface: Surface?) {
+    mediaPlayer.setSurface(surface)
+  }
+
   override fun setDataSource(dataSource: BeggarPlayerDataSource) {
     mediaPlayer.setDataSource(context, dataSource.uri)
   }
@@ -138,8 +143,8 @@ class SystemMediaPlayerLogic(private val context: Context) : IBeggarPlayerLogic 
     }
   }
 
-  override fun setVolume(volume: Float) {
-    mediaPlayer.setVolume(volume, volume)
+  override fun setVolume(leftVolume: Float, rightVolume: Float) {
+    mediaPlayer.setVolume(leftVolume, rightVolume)
   }
 
   override fun setLoop(loop: Boolean) {
