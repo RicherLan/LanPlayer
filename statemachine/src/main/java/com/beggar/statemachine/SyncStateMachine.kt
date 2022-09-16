@@ -138,21 +138,21 @@ abstract class SyncStateMachine(
    */
   // TODO: 因为当前状态已经确定了，所以这里最完美的应该是直接操作最底层的状态去处理事件，无法处理的话在往上抛
   protected fun sendEventDirect(event: Event): Boolean {
-    var currentState = currentState ?: throw IllegalStateException(
+    val curState = currentState ?: throw IllegalStateException(
       TAG.plus("[stateMachine has already stopped")
     )
     // 如果当前状态含有子状态机，那么把事件向内部传递
-    if (currentState is ChildStateMachineStateNode) {
-      var childHandled = currentState.childStateMachine.sendEventDirect(event)
+    if (curState is ChildStateMachineStateNode) {
+      var childHandled = curState.childStateMachine.sendEventDirect(event)
       if (childHandled) {
         return true
       }
     }
 
     // 状态转换
-    transitions[currentState.state]?.forEach { transition ->
+    transitions[curState.state]?.forEach { transition ->
       if (event.javaClass == transition.eventType) {
-        currentState.exit()
+        curState.exit()
         val toState = transition.to
         toState.stateNode.enter(event)
         currentState = toState.stateNode
@@ -161,7 +161,7 @@ abstract class SyncStateMachine(
     }
 
     // 处理事件
-    return currentState.handleEvent(event)
+    return curState.handleEvent(event)
   }
 
   /**
