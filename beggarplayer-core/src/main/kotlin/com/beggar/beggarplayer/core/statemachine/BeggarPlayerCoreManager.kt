@@ -42,25 +42,37 @@ class BeggarPlayerCoreManager(
   internal var stateMachine: SyncStateMachine
 
   // 播放器进行画面渲染的view
+  // TODO: 把surfaceTexture封装到textureView中，对外值提供surface
   private var textureView: BeggarPlayerTextureView? = null
+  private var surfaceTexture: SurfaceTexture? = null
 
   // 播放器进行画面渲染的surface
   private var surface: Surface? = null
 
   // 监听SurfaceTexture
   private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-    override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-
+    override fun onSurfaceTextureAvailable(
+      st: SurfaceTexture,
+      width: Int,
+      height: Int
+    ) {
+      if (surfaceTexture != st) {
+        surfaceTexture = st
+        surface = Surface(surfaceTexture)
+        playerLogic.setSurface(surface)
+      }
     }
 
-    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
+    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+
+    override fun onSurfaceTextureDestroyed(st: SurfaceTexture): Boolean {
+      surface = null
+      surfaceTexture = null
+      playerLogic.setSurface(null)
+      return true
     }
 
-    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-    }
-
-    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
-    }
+    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
   }
 
   // 播放器事件分发
@@ -377,7 +389,10 @@ class BeggarPlayerCoreManager(
     releaseSurface()
     textureView = view
     textureView?.surfaceTextureListener = surfaceTextureListener
-    // TODO: 补全
+
+    surfaceTexture = textureView?.surfaceTexture
+    surface = Surface(surfaceTexture)
+    playerLogic.setSurface(surface)
   }
 
   fun registerObserver(observer: IBeggarPlayerStateObserver) {
@@ -411,6 +426,8 @@ class BeggarPlayerCoreManager(
     playerLogic.setSurface(null)
     surface?.release()
     surface = null
+    surfaceTexture?.release()
+    surfaceTexture = null
     textureView?.surfaceTextureListener = null
     textureView = null
   }
