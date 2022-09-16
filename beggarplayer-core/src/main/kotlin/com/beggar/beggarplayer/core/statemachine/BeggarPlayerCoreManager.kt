@@ -396,8 +396,10 @@ class BeggarPlayerCoreManager(
     textureView?.surfaceTextureListener = surfaceTextureListener
 
     surfaceTexture = textureView?.surfaceTexture
-    surface = Surface(surfaceTexture)
-    playerLogic.setSurface(surface)
+    surfaceTexture?.let {
+      surface = Surface(surfaceTexture)
+      playerLogic.setSurface(surface)
+    }
   }
 
   fun registerObserver(observer: IBeggarPlayerStateObserver) {

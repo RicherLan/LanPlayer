@@ -1,9 +1,11 @@
 package com.lan.player
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.beggar.beggarplayer.core.BeggarPlayerController
 import com.beggar.beggarplayer.core.config.BeggarPlayerConfig
+import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**
@@ -25,6 +27,10 @@ class MainActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
+    val dataSource = BeggarPlayerDataSource(
+      Uri.parse("http://vfx.mtime.cn/Video/2018/07/06/mp4/180706094003288023.mp4")
+    )
+    playerController.setDataSource(dataSource)
   }
 
   private fun initPlayer(textureView: BeggarPlayerTextureView) {
