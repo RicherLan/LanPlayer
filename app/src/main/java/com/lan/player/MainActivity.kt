@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
       Uri.parse("http://vfx.mtime.cn/Video/2018/07/06/mp4/180706094003288023.mp4")
     )
     playerController.setDataSource(dataSource)
+    playerController.prepareSync()
+//    playerController.prepareAsync()
+    playerController.start()
   }
 
   override fun onDestroy() {
