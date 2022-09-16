@@ -33,6 +33,11 @@ class MainActivity : AppCompatActivity() {
     playerController.setDataSource(dataSource)
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    playerController.release()
+  }
+
   private fun initPlayer(textureView: BeggarPlayerTextureView) {
     playerController = BeggarPlayerController(this, BeggarPlayerConfig(null))
     playerController.setTextureView(textureView)

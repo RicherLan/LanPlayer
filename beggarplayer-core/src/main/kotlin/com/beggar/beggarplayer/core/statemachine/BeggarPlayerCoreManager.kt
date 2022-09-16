@@ -3,6 +3,7 @@ package com.beggar.beggarplayer.core.statemachine
 import android.graphics.SurfaceTexture
 import android.view.Surface
 import android.view.TextureView
+import com.beggar.beggarplayer.core.base.BaseManager
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.log.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.observer.BeggarPlayerObserverDispatcher
@@ -32,7 +33,7 @@ import com.beggar.statemachine.uml.toUml
  */
 class BeggarPlayerCoreManager(
   val playerLogic: IBeggarPlayerLogic
-) {
+) : BaseManager {
 
   companion object {
     private const val TAG = "BeggarPlayerCoreManager"
@@ -269,6 +270,7 @@ class BeggarPlayerCoreManager(
   init {
     stateMachine = buildStateMachine()
     BeggarPlayerLogger.log(TAG, "\n\n" + stateMachine.toUml())
+    stateMachine.start()
     initPlayerLogic()
   }
 
@@ -461,6 +463,15 @@ class BeggarPlayerCoreManager(
   }
 
   // ********************* 获得一些信息 *********************
+
+  /**
+   * 释放manager
+   */
+  override fun release() {
+    sendEvent(Release())
+    stateMachine.stop()
+    releaseSurface()
+  }
 
   /**
    *  处理SeekTo事件

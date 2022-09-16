@@ -78,7 +78,7 @@ class BeggarPlayerController(
   }
 
   override fun release() {
-    coreManager.sendEvent(PlayerEvent.Release())
+    coreManager.release()
   }
 
   // ********************* 生命周期相关 *********************

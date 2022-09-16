@@ -39,6 +39,10 @@ abstract class SyncStateMachine(
   // 操作队列
   private val actionQueue = ActionQueue()
 
+  init {
+    currentState = initialState
+  }
+
   /**
    * 启动状态机
    */
