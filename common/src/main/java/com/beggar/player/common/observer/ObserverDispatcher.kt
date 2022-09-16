@@ -24,4 +24,8 @@ open class ObserverDispatcher<Observer> {
     }
   }
 
+  fun clear() {
+    observers.clear()
+  }
+
 }

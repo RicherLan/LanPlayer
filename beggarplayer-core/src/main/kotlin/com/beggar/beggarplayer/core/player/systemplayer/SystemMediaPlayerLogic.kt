@@ -77,7 +77,7 @@ class SystemMediaPlayerLogic(private val context: Context) : IBeggarPlayerLogic 
         )
       }
     })
-    // 播放完成时回调
+    // 完成时回调(播放完、error后)
     mediaPlayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
       override fun onCompletion(mp: MediaPlayer?) {
         BeggarPlayerLogger.log(TAG, "onCompletion")

@@ -468,6 +468,7 @@ class BeggarPlayerCoreManager(
    * 释放manager
    */
   override fun release() {
+    observerDispatcher.clear()
     sendEvent(Release())
     stateMachine.stop()
     releaseSurface()

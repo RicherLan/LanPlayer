@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.beggar.beggarplayer.core.BeggarPlayerController
 import com.beggar.beggarplayer.core.config.BeggarPlayerConfig
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
+import com.beggar.beggarplayer.core.observer.IBeggarPlayerStateObserver
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**
@@ -27,13 +28,13 @@ class MainActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-    val dataSource = BeggarPlayerDataSource(
-      Uri.parse("http://vfx.mtime.cn/Video/2018/07/06/mp4/180706094003288023.mp4")
-    )
+    // 这个网络链接的编码不支持
+//    val uri = Uri.parse("http://vfx.mtime.cn/Video/2018/07/06/mp4/180706094003288023.mp4")
+    val uri = Uri.parse("android.resource://" + getPackageName() + "/"+ R.raw.raw_video)
+    val dataSource = BeggarPlayerDataSource(uri)
     playerController.setDataSource(dataSource)
-    playerController.prepareSync()
-//    playerController.prepareAsync()
-    playerController.start()
+//    playerController.prepareSync()
+    playerController.prepareAsync()
   }
 
   override fun onDestroy() {
@@ -44,6 +45,12 @@ class MainActivity : AppCompatActivity() {
   private fun initPlayer(textureView: BeggarPlayerTextureView) {
     playerController = BeggarPlayerController(this, BeggarPlayerConfig(null))
     playerController.setTextureView(textureView)
+    playerController.registerObserver(object : IBeggarPlayerStateObserver {
+      override fun onEnterPrepared() {
+        super.onEnterPrepared()
+        playerController.start()
+      }
+    })
   }
 
 }
