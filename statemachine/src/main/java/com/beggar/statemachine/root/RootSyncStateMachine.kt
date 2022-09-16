@@ -21,7 +21,7 @@ class RootSyncStateMachine(
   override fun start() {
     checkThread()
     // 已经stop了
-    check(isStopped) {
+    check(!isStopped) {
       "stateMachine has stopped!"
     }
 

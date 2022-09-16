@@ -9,7 +9,7 @@ import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/9/9 10:25 上午
  * description:
  */
