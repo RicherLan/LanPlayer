@@ -15,6 +15,7 @@ class PlayerStateUmlTest {
   fun testUml() {
     val stateMachine = buildStateMachine()
     println("PlayerStateUmlTest" + stateMachine.toUml())
+    stateMachine.start()
   }
 
   /**
