@@ -8,7 +8,7 @@ import com.beggar.statemachine.State
  * description: 含有子状态机的状态
  *
  */
-class ChildStateMachineState<EnterParam>(name: String) : State<EnterParam>(name) {
+open class ChildStateMachineState<EnterParam>(name: String) : State<EnterParam>(name) {
 
 
 }

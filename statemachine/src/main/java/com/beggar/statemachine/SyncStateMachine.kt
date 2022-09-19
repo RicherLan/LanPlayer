@@ -236,7 +236,7 @@ abstract class SyncStateMachine(
      */
     fun childStateMachine(
       state: ChildStateMachineState<*>,
-      childStateMachineBuilder: ChildStateMachineBuilder
+      childStateMachineBuilder: Builder
     ) = apply {
       addState(ChildStateMachineStateNode(state, childStateMachineBuilder.build()))
     }
