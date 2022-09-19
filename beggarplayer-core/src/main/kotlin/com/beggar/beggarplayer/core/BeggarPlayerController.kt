@@ -6,8 +6,7 @@ import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.observer.IBeggarPlayerStateObserver
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
 import com.beggar.beggarplayer.core.player.systemplayer.SystemMediaPlayerLogic
-import com.beggar.beggarplayer.core.statemachine.BeggarPlayerCoreManager
-import com.beggar.beggarplayer.core.statemachine.BeggarPlayerCoreManager.PlayerEvent
+import com.beggar.beggarplayer.core.BeggarPlayerCoreManager.PlayerEvent
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 
 /**

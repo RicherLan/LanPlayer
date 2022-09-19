@@ -1,4 +1,4 @@
-package com.beggar.beggarplayer.core.statemachine
+package com.beggar.beggarplayer.core
 
 import android.graphics.SurfaceTexture
 import android.view.Surface
@@ -9,7 +9,7 @@ import com.beggar.beggarplayer.core.log.BeggarPlayerLogger
 import com.beggar.beggarplayer.core.observer.BeggarPlayerObserverDispatcher
 import com.beggar.beggarplayer.core.observer.IBeggarPlayerStateObserver
 import com.beggar.beggarplayer.core.player.IBeggarPlayerLogic
-import com.beggar.beggarplayer.core.statemachine.BeggarPlayerCoreManager.PlayerEvent.*
+import com.beggar.beggarplayer.core.BeggarPlayerCoreManager.PlayerEvent.*
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
 import com.beggar.statemachine.Event
 import com.beggar.statemachine.State
