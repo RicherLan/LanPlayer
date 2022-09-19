@@ -41,6 +41,6 @@ dependencies {
 
     implementation Libs.retrofit
     implementation Libs.rxjava
+    implementation project(':beggarplayer')
 
-    implementation project(":beggarplayer-core")
 }

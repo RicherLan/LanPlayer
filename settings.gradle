@@ -14,7 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "LanPlayer"
 include ':app'
-include ':beggarplayer-core'
+include ':beggarplayer'
 include ':common'
 include ':statemachine'
 include ':beggarHttp'
