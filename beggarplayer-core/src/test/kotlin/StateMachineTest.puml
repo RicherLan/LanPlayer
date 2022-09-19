@@ -1,0 +1,34 @@
+@startuml
+skinparam backgroundColor LightYellow
+skinparam state {
+  StartColor MediumBlue
+  EndColor Red
+  BackgroundColor Peru
+  BackgroundColor<<Warning>> Olive
+  BorderColor Gray
+  FontName Impact
+}
+[*]-->aState
+state aState{
+}
+state cState{
+}
+state dState{
+}
+state bState{
+[*]-->bChildState1
+state bChildState1{
+}
+state bChildState2{
+}
+state bChildState3{
+}
+bChildState1 --> bChildState2 : (Reset)
+bChildState1 --> bChildState3 : (Reset)
+bChildState2 --> bChildState3 : (Reset)
+}
+aState --> bState : (Reset)
+bState --> cState : (Reset)
+bState --> dState : (Reset)
+cState --> dState : (Reset)
+@enduml
