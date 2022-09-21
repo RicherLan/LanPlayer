@@ -5,6 +5,6 @@ package com.beggar.http.call
  * created on: 2022/9/20 8:07 下午
  * description: 调用
  */
-interface ICall {
+interface Call {
 
 }
