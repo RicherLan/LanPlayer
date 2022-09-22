@@ -5,7 +5,7 @@ import com.beggar.http.response.Response
 import java.io.IOException
 
 /**
- * author: lanweihua
+ * author: BeggarLan
  * created on: 2022/9/21 12:50 下午
  * description: 请求结果
  */
