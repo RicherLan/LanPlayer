@@ -8,6 +8,7 @@ import com.beggar.beggarplayer.core.config.BeggarPlayerConfig
 import com.beggar.beggarplayer.core.datasource.BeggarPlayerDataSource
 import com.beggar.beggarplayer.core.observer.IBeggarPlayerStateObserver
 import com.beggar.beggarplayer.core.view.BeggarPlayerTextureView
+import com.beggar.player.common.GaryUtil
 
 /**
  * author: BeggarLan
@@ -20,6 +21,9 @@ class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    // 页面置灰
+    GaryUtil.garyActivity(this)
+
     setContentView(R.layout.activity_main)
 
     val textureView = findViewById<BeggarPlayerTextureView>(R.id.main_player_texture_view)
