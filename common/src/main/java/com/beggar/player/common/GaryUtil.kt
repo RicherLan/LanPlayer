@@ -41,6 +41,7 @@ object GaryUtil {
   }
 
   fun garyView(view: View) {
+    // LAYER_TYPE_HARDWARE和LAYER_TYPE_SOFTWARE都可以
     view.setLayerType(View.LAYER_TYPE_HARDWARE, garyPaint)
   }
 
